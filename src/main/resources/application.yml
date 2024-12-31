@@ -1,0 +1,14 @@
+spring:
+  application.name: INFO
+  datasource:
+    url: jdbc:mysql://localhost:3306/info
+    username: info_back
+    password: "0000"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
