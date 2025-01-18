@@ -36,4 +36,9 @@ public class UserService {
         );
         log.info("localAuthDetails: {} is created", localAuthDetails);
     }
+
+    public String login(String username, String password) {
+        // todo: implement
+        return "token";
+    }
 }

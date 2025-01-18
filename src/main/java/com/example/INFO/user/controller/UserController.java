@@ -1,6 +1,8 @@
 package com.example.INFO.user.controller;
 
+import com.example.INFO.user.dto.request.UserLoginRequest;
 import com.example.INFO.user.dto.request.UserSignupRequest;
+import com.example.INFO.user.dto.response.UserLoginResponse;
 import com.example.INFO.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,5 +25,12 @@ public class UserController {
     public ResponseEntity<Void> signup(@RequestBody UserSignupRequest request) {
         userService.createUser(request.getUsername(), request.getPassword());
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
+        String token = userService.login(request.getUsername(), request.getPassword());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(UserLoginResponse.of(token));
     }
 }
