@@ -1,5 +1,6 @@
 package com.example.INFO.user.controller;
 
+import com.example.INFO.user.configuration.SecurityConfig;
 import com.example.INFO.user.dto.request.UserSignupRequest;
 import com.example.INFO.user.exception.UserException;
 import com.example.INFO.user.exception.UserExceptionType;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -23,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
+@Import(SecurityConfig.class)
 public class UserControllerTest {
 
     private final MockMvc mockMvc;
