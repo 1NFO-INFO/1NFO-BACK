@@ -4,14 +4,18 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "\"local_auth_details\"")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@ToString
 public class LocalAuthDetailsEntity {
 
     @Id
+    private Long id;
+
     @OneToOne
     @MapsId
     @JoinColumn(name = "user_id", nullable = false)
