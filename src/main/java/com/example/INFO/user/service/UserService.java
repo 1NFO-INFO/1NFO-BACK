@@ -38,7 +38,16 @@ public class UserService {
     }
 
     public String login(String username, String password) {
-        // todo: implement
-        return "token";
+        log.debug("login try: username: {}, password: {}", username, password);
+        LocalAuthDetailsEntity localAuthDetails = localAuthDetailsRepository.findByUsername(username)
+                .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(password, localAuthDetails.getPassword())) {
+            log.debug("password is not matched");
+            throw new UserException(UserExceptionType.INVALID_PASSWORD);
+        }
+
+        // todo: JWT 토큰을 생성하여 반환
+        return "JWT_token";
     }
 }
