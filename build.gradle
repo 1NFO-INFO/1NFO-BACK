@@ -38,6 +38,12 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	/* Lombok for test end */
+
+	/* Jwt start */
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+	/* Jwt end */
 }
 
 tasks.named('test') {
