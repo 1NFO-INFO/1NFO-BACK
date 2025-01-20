@@ -21,6 +21,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final LocalAuthDetailsRepository localAuthDetailsRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenService jwtTokenService;
 
     public void createUser(String username, String password) {
         if (localAuthDetailsRepository.existsByUsername(username)) {
@@ -47,7 +48,8 @@ public class UserService {
             throw new UserException(UserExceptionType.INVALID_PASSWORD);
         }
 
-        // todo: JWT 토큰을 생성하여 반환
-        return "JWT_token";
+        String token = jwtTokenService.generateToken(username);
+
+        return token;
     }
 }

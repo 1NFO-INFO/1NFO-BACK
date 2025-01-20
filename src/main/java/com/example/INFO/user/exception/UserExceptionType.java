@@ -10,7 +10,8 @@ public enum UserExceptionType {
 
     DUPLICATED_USERNAME(HttpStatus.CONFLICT),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND),
-    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED)
+    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED),
     ;
 
     private final HttpStatus status;

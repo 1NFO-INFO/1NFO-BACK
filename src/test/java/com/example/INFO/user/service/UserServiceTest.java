@@ -23,8 +23,10 @@ class UserServiceTest {
     private final UserRepository userRepository = mock(UserRepository.class);
     private final LocalAuthDetailsRepository localAuthDetailsRepository = mock(LocalAuthDetailsRepository.class);
     private final PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
+    private final JwtTokenService jwtTokenService = mock(JwtTokenService.class);
+
     private final UserService userService = new UserService(
-            userRepository, localAuthDetailsRepository, passwordEncoder
+            userRepository, localAuthDetailsRepository, passwordEncoder, jwtTokenService
     );
 
     @Test

@@ -13,6 +13,11 @@ spring:
     properties:
       hibernate.format_sql: true
 
+jwt:
+  secret-key: info-application-secret-key-for-development-must-over-256-bit
+  token:
+    expired-time-ms: 2592000000 # 30 days (30 * 24 * 60 * 60 * 1000)
+
 logging:
   level:
     com.example.INFO.user: DEBUG
