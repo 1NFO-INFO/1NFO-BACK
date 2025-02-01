@@ -1,6 +1,8 @@
 package com.example.INFO.user.controller;
 
+import com.example.INFO.user.dto.JwtTokenDto;
 import com.example.INFO.user.dto.request.UserLoginRequest;
+import com.example.INFO.user.dto.request.UserRefreshRequest;
 import com.example.INFO.user.dto.request.UserSignupRequest;
 import com.example.INFO.user.exception.UserException;
 import com.example.INFO.user.exception.UserExceptionType;
@@ -15,8 +17,7 @@ import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -68,7 +69,7 @@ public class UserControllerTest {
         String password = "password";
 
         when(userService.login(username, password))
-                .thenReturn("test_token");
+                .thenReturn(mock(JwtTokenDto.class));
 
         mockMvc.perform(
                 post("/users/login")
@@ -106,6 +107,37 @@ public class UserControllerTest {
                 post("/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(new UserLoginRequest(username, password)))
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void 리프레쉬() throws Exception {
+        String accessToken = "access-token";
+        String refreshToken = "refresh-token";
+
+        when(userService.refresh(refreshToken))
+                .thenReturn(JwtTokenDto.of(accessToken, refreshToken));
+
+        mockMvc.perform(
+                post("/users/refresh")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new UserRefreshRequest(refreshToken)))
+                ).andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void 리프레쉬_실패시_Unauthorized를_반환한다() throws Exception {
+        String refreshToken = "refresh-token";
+
+        when(userService.refresh(refreshToken))
+                .thenThrow(new UserException(UserExceptionType.INVALID_REFRESH_TOKEN));
+
+        mockMvc.perform(
+                post("/users/refresh")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new UserRefreshRequest(refreshToken)))
                 ).andDo(print())
                 .andExpect(status().isUnauthorized());
     }

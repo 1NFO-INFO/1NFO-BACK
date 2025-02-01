@@ -1,16 +1,22 @@
 package com.example.INFO.user.service;
 
+import com.example.INFO.user.dto.JwtTokenDto;
 import com.example.INFO.user.exception.UserException;
 import com.example.INFO.user.exception.UserExceptionType;
 import com.example.INFO.user.model.entity.LocalAuthDetailsEntity;
+import com.example.INFO.user.model.entity.RefreshTokenEntity;
 import com.example.INFO.user.model.entity.UserEntity;
+import com.example.INFO.user.properties.JwtProperties;
 import com.example.INFO.user.repository.LocalAuthDetailsRepository;
+import com.example.INFO.user.repository.RefreshTokenRepository;
 import com.example.INFO.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -20,8 +26,10 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final LocalAuthDetailsRepository localAuthDetailsRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenService jwtTokenService;
+    private final JwtProperties jwtProperties;
 
     public void createUser(String username, String password) {
         if (localAuthDetailsRepository.existsByUsername(username)) {
@@ -38,7 +46,7 @@ public class UserService {
         log.info("localAuthDetails: {} is created", localAuthDetails);
     }
 
-    public String login(String username, String password) {
+    public JwtTokenDto login(String username, String password) {
         log.debug("login try: username: {}, password: {}", username, password);
         LocalAuthDetailsEntity localAuthDetails = localAuthDetailsRepository.findByUsername(username)
                 .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
@@ -48,8 +56,30 @@ public class UserService {
             throw new UserException(UserExceptionType.INVALID_PASSWORD);
         }
 
-        String token = jwtTokenService.generateToken(username);
+        JwtTokenDto jwtTokenDto = jwtTokenService.generateJwtToken(username);
+        String refreshToken = jwtTokenDto.getRefreshToken();
+        LocalDateTime refreshTokenIssuedAt = jwtTokenService.getIssuedAt(refreshToken);
+        LocalDateTime refreshTokenExpiration = jwtTokenService.getExpiration(refreshToken);
 
-        return token;
+        RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.of(localAuthDetails.getUser(), jwtTokenDto.getRefreshToken(), refreshTokenIssuedAt, refreshTokenExpiration);
+        refreshTokenRepository.save(refreshTokenEntity);
+
+        return jwtTokenDto;
+    }
+
+    public JwtTokenDto refresh(String refreshToken) {
+        // refresh token이 만료되었는지 확인
+        if (jwtTokenService.isExpired(refreshToken)) {
+            throw new UserException(UserExceptionType.INVALID_REFRESH_TOKEN);
+        }
+
+        // repository에서 refresh token이 존재하는지 확인
+        if (!refreshTokenRepository.existsByValue(refreshToken)) {
+            throw new UserException(UserExceptionType.INVALID_REFRESH_TOKEN);
+        }
+
+        // refresh token이 유효하다면 새로운 JWT token을 발급
+        String username = jwtTokenService.getUsername(refreshToken);
+        return jwtTokenService.generateJwtToken(username);
     }
 }

@@ -1,8 +1,11 @@
 package com.example.INFO.user.controller;
 
+import com.example.INFO.user.dto.JwtTokenDto;
 import com.example.INFO.user.dto.request.UserLoginRequest;
+import com.example.INFO.user.dto.request.UserRefreshRequest;
 import com.example.INFO.user.dto.request.UserSignupRequest;
 import com.example.INFO.user.dto.response.UserLoginResponse;
+import com.example.INFO.user.dto.response.UserRefreshResponse;
 import com.example.INFO.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -29,8 +32,15 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
-        String token = userService.login(request.getUsername(), request.getPassword());
+        JwtTokenDto jwtTokenDto = userService.login(request.getUsername(), request.getPassword());
         return ResponseEntity.status(HttpStatus.OK)
-                .body(UserLoginResponse.of(token));
+                .body(UserLoginResponse.from(jwtTokenDto));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<UserRefreshResponse> refresh(@RequestBody UserRefreshRequest request) {
+        JwtTokenDto jwtTokenDto = userService.refresh(request.getRefreshToken());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(UserRefreshResponse.from(jwtTokenDto));
     }
 }

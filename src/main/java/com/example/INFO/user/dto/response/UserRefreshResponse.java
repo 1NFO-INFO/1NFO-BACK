@@ -8,7 +8,7 @@ import lombok.Value;
 
 @Value
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserLoginResponse {
+public class UserRefreshResponse {
 
     @JsonProperty("access_token")
     String accessToken;
@@ -16,7 +16,7 @@ public class UserLoginResponse {
     @JsonProperty("refresh_token")
     String refreshToken;
 
-    public static UserLoginResponse from(JwtTokenDto jwtTokenDto) {
-        return new UserLoginResponse(jwtTokenDto.getAccessToken(), jwtTokenDto.getRefreshToken());
+    public static UserRefreshResponse from(JwtTokenDto jwtTokenDto) {
+        return new UserRefreshResponse(jwtTokenDto.getAccessToken(), jwtTokenDto.getRefreshToken());
     }
 }
