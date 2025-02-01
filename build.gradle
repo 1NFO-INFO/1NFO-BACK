@@ -44,6 +44,10 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 	/* Jwt end */
+
+	/* for @ConfigurationProperties start */
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+	/* for @ConfigurationProperties end */
 }
 
 tasks.named('test') {
