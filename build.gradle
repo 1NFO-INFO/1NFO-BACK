@@ -48,6 +48,8 @@ dependencies {
 	/* for @ConfigurationProperties start */
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 	/* for @ConfigurationProperties end */
+	//Swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 }
 
 tasks.named('test') {
