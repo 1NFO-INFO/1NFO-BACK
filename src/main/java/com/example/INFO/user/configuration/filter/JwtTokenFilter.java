@@ -34,7 +34,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         try {
-            final String token = header.replace("Bearer: ", "");
+            final String token = header.replace("Bearer ", "");
             if (jwtTokenService.isExpired(token)) {
                 log.debug("Key is expired.");
                 filterChain.doFilter(request, response);
