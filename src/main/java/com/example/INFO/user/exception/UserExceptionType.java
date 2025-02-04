@@ -14,6 +14,8 @@ public enum UserExceptionType {
     INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED),
     EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED),
+    UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED),
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR)
     ;
 
     private final HttpStatus status;
