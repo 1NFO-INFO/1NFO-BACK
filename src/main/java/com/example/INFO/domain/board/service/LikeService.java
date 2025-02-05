@@ -1,10 +1,12 @@
 package com.example.INFO.domain.board.service;
 
 import com.example.INFO.domain.board.domain.Board;
+import com.example.INFO.domain.board.domain.Comment;
 import com.example.INFO.domain.board.domain.Like;
 import com.example.INFO.domain.board.domain.repository.BoardRepository;
 import com.example.INFO.domain.board.domain.repository.CommentRepository;
 import com.example.INFO.domain.board.domain.repository.LikeRepository;
+import com.example.INFO.domain.board.dto.res.CommentLikeResponse;
 import com.example.INFO.domain.board.dto.res.LikeResponse;
 import com.example.INFO.domain.user.model.entity.UserEntity;
 import com.example.INFO.domain.user.repository.UserRepository;
@@ -67,5 +69,31 @@ public class LikeService {
                 .likeCount(board.getLikeCount())
                 .build();
     }
+    // 댓글 좋아요
+    @Transactional
+    public CommentLikeResponse likeComment(Long userId, Long commentId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "User not found"));
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Comment not found"));
+
+        // 중복 좋아요 방지
+        if (likeRepository.existsByUserAndComment(user, comment)) {
+            throw new DefaultException(ErrorCode.DUPLICATE_ERROR, "Already liked");
+        }
+
+        Like like = Like.builder()
+                .user(user)
+                .comment(comment)
+                .build();
+
+        likeRepository.save(like);
+
+        return CommentLikeResponse.builder()
+                .commentId(commentId)
+                .likeCount(comment.getLikeCount()) // 현재 좋아요 개수 반환
+                .build();
+    }
+
 
 }
