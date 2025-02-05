@@ -35,4 +35,12 @@ public class CommentController {
         List<CommentResponse> responses = commentService.getCommentsWithReplies(boardId);
         return ResponseEntity.ok(responses);
     }
+    // 댓글 수정
+    @Operation(summary = "댓글 수정", description = "댓글 내용을 수정합니다.")
+    @PutMapping("/{commentId}")
+    public ResponseEntity<CommentResponse> updateComment(@PathVariable Long commentId, @RequestParam String content) {
+        Long userId = authUserService.getAuthenticatedUserId(); // ✅ 로그인된 사용자 정보 가져오기
+        CommentResponse response = commentService.updateComment(userId, commentId, content);
+        return ResponseEntity.ok(response);
+    }
 }

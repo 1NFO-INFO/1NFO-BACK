@@ -9,6 +9,7 @@ import com.example.INFO.domain.board.dto.res.CommentResponse;
 import com.example.INFO.domain.user.model.entity.UserEntity;
 import com.example.INFO.domain.user.repository.UserRepository;
 import com.example.INFO.global.exception.NotFoundException;
+import com.example.INFO.global.exception.UnauthorizedException;
 import com.example.INFO.global.payload.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -77,7 +78,19 @@ public class CommentService {
                 .map(this::mapToResponseWithReplies)
                 .collect(Collectors.toList());
     }
+    // 댓글 수정
+    @Transactional
+    public CommentResponse updateComment(Long userId, Long commentId, String content) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Comment not found"));
 
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED.getCode(), "User not authorized to update this comment");
+        }
+
+        comment.updateContent(content);
+        return mapToResponse(comment);
+    }
     // Comment -> CommentResponse 매핑
     private CommentResponse mapToResponse(Comment comment) {
         return CommentResponse.builder()
