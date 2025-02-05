@@ -43,4 +43,13 @@ public class CommentController {
         CommentResponse response = commentService.updateComment(userId, commentId, content);
         return ResponseEntity.ok(response);
     }
+
+    // 댓글 삭제
+    @Operation(summary = "댓글 삭제", description = "댓글을 삭제합니다.")
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<String> deleteComment(@PathVariable Long commentId) {
+        Long userId = authUserService.getAuthenticatedUserId(); // ✅ 로그인된 사용자 정보 가져오기
+        commentService.deleteComment(userId, commentId);
+        return ResponseEntity.ok("Comment deleted successfully");
+    }
 }

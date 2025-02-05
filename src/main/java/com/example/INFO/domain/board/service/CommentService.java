@@ -91,6 +91,18 @@ public class CommentService {
         comment.updateContent(content);
         return mapToResponse(comment);
     }
+    // 댓글 삭제
+    @Transactional
+    public void deleteComment(Long userId, Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Comment not found"));
+
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED.getCode(), "User not authorized to delete this comment");
+        }
+
+        commentRepository.delete(comment);
+    }
     // Comment -> CommentResponse 매핑
     private CommentResponse mapToResponse(Comment comment) {
         return CommentResponse.builder()
