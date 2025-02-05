@@ -42,4 +42,13 @@ public class BoardController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Board created successfully");
     }
+    // 게시글 삭제
+    @Operation(summary = "게시글 삭제", description = "게시글을 삭제합니다.")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteBoard(@PathVariable Long id) {
+        Long userId = authUserService.getAuthenticatedUserId(); // 현재 로그인한 사용자 ID 가져오기
+        boardService.deleteBoard(id, userId);
+        return ResponseEntity.ok("Board deleted successfully");
+    }
+
 }
