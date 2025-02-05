@@ -2,6 +2,7 @@ package com.example.INFO.domain.board.controller;
 
 import com.example.INFO.domain.board.dto.req.BoardCreateRequest;
 import com.example.INFO.domain.board.dto.req.BoardUpdateRequest;
+import com.example.INFO.domain.board.dto.res.BoardPageResponse;
 import com.example.INFO.domain.board.dto.res.BoardResponse;
 import com.example.INFO.domain.board.service.BoardService;
 import com.example.INFO.domain.s3service.S3ImageService;
@@ -79,6 +80,17 @@ public class BoardController {
 
         Long userId = authUserService.getAuthenticatedUserId(); // 현재 로그인한 사용자 ID 가져오기
         BoardResponse response = boardService.updateBoard(id, userId, request, image);
+        return ResponseEntity.ok(response);
+    }
+    //카테고리별 정렬
+    @Operation(summary = "카테고리별 게시글 조회", description = "카테고리명으로 게시글을 필터링하여 조회합니다.")
+    @GetMapping("/category")
+    public ResponseEntity<BoardPageResponse> getBoardsByCategory(
+            @RequestParam(name = "categoryName") String categoryName,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        BoardPageResponse response = boardService.getBoardsByCategory(categoryName, page, size);
         return ResponseEntity.ok(response);
     }
 }

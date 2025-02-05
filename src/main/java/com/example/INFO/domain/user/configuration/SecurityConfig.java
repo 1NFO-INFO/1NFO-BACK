@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers(HttpMethod.GET, "/api/v1/boards/search/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/boards/category").permitAll()
                                 .requestMatchers("/users", "/users/login", "/users/refresh").permitAll()
                                 .anyRequest().authenticated()
                 ).sessionManagement(sessionManagement -> sessionManagement

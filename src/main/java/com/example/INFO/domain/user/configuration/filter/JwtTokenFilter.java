@@ -26,6 +26,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String requestURI = request.getRequestURI();
+
+        if (request.getMethod().equals("GET") && requestURI.startsWith("/api/v1/boards/search")) {
+            log.debug("Skipping JWT filter for: " + requestURI);
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (header == null || !header.startsWith("Bearer ")) {
             log.debug("Error occurs while getting header. header is null or invalid.");
