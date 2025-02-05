@@ -48,6 +48,28 @@ public class CommentService {
         Comment savedComment = commentRepository.save(comment);
         return mapToResponse(savedComment);
     }
+
+    // 대댓글 생성
+    @Transactional
+    public CommentResponse createReply(Long userId, Long parentId, String content) {
+        Comment parent = commentRepository.findById(parentId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Parent comment not found"));
+
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "User not found"));
+
+        Comment reply = Comment.builder()
+                .board(parent.getBoard())
+                .user(user)
+                .content(content)
+                .parent(parent)
+                .build();
+
+        Comment savedReply = commentRepository.save(reply);
+        return mapToResponse(savedReply);
+    }
+
+
     // Comment -> CommentResponse 매핑
     private CommentResponse mapToResponse(Comment comment) {
         return CommentResponse.builder()
