@@ -64,6 +64,6 @@ public class Board extends BaseEntity {
     }
 
     public int getLikeCount() {
-        return likes.size();
+        return likes == null ? 0 : likes.size();
     }
 }

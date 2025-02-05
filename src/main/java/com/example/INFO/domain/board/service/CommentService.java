@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,7 +69,14 @@ public class CommentService {
         Comment savedReply = commentRepository.save(reply);
         return mapToResponse(savedReply);
     }
-
+    // 게시글의 모든 댓글 조회
+    @Transactional(readOnly = true) // 트랜잭션 유지
+    public List<CommentResponse> getCommentsWithReplies(Long boardId) {
+        List<Comment> parentComments = commentRepository.findByBoardIdAndParentIsNull(boardId);
+        return parentComments.stream()
+                .map(this::mapToResponseWithReplies)
+                .collect(Collectors.toList());
+    }
 
     // Comment -> CommentResponse 매핑
     private CommentResponse mapToResponse(Comment comment) {
@@ -83,6 +91,21 @@ public class CommentService {
                 .replies(comment.getReplies() == null ?
                         new ArrayList<>() :
                         comment.getReplies().stream().map(this::mapToResponse).collect(Collectors.toList()))
+                .build();
+    }
+    // 댓글과 대댓글 응답 매핑
+    private CommentResponse mapToResponseWithReplies(Comment comment) {
+        return CommentResponse.builder()
+                .id(comment.getId())
+                .boardId(comment.getBoard().getId())
+                .userId(comment.getUser().getId())
+                .content(comment.getContent())
+                .createdTime(comment.getCreatedTime())
+                .updatedTime(comment.getUpdatedTime())
+                .likeCount(comment.getLikeCount())
+                .replies(comment.getReplies().stream()
+                        .map(this::mapToResponseWithReplies)
+                        .collect(Collectors.toList()))
                 .build();
     }
 }

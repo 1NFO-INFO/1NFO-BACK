@@ -26,11 +26,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(CsrfConfigurer::disable)
-                .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests
-                                .requestMatchers(HttpMethod.GET, "/api/v1/boards/search/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/boards/category").permitAll()
-                                .requestMatchers("/users", "/users/login", "/users/refresh").permitAll()
+                .authorizeHttpRequests(authorizeRequests ->authorizeRequests
+                        .requestMatchers(
+                                    "/swagger-ui/**",
+                                    "/swagger-ui.html",
+                                    "/v3/api-docs/**",
+                                    "/v3/api-docs.yaml",
+                                    "/swagger-resources/**",
+                                    "/webjars/**"
+                                ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/boards/search/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/boards/category").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/comments/search/board/**").permitAll()
+                        .requestMatchers("/users", "/users/login", "/users/refresh").permitAll()
                                 .anyRequest().authenticated()
                 ).sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

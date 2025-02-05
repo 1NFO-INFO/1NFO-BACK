@@ -8,10 +8,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/comments")
@@ -28,5 +27,12 @@ public class CommentController {
         Long userId = authUserService.getAuthenticatedUserId(); // ✅ 로그인된 사용자 정보 가져오기
         CommentResponse response = commentService.createComment(userId, request);
         return ResponseEntity.ok(response);
+    }
+    // 댓글 및 대댓글 조회
+    @Operation(summary = "게시글의 댓글 및 대댓글 조회", description = "게시글 ID를 기준으로 모든 댓글과 대댓글을 조회합니다.")
+    @GetMapping("/search/board/{boardId}")
+    public ResponseEntity<List<CommentResponse>> getCommentsWithReplies(@PathVariable Long boardId) {
+        List<CommentResponse> responses = commentService.getCommentsWithReplies(boardId);
+        return ResponseEntity.ok(responses);
     }
 }
