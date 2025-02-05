@@ -4,6 +4,7 @@ import com.example.INFO.domain.board.dto.req.BoardCreateRequest;
 import com.example.INFO.domain.board.dto.req.BoardUpdateRequest;
 import com.example.INFO.domain.board.dto.res.BoardPageResponse;
 import com.example.INFO.domain.board.dto.res.BoardResponse;
+import com.example.INFO.domain.board.dto.res.TopLikedBoardResponse;
 import com.example.INFO.domain.board.service.BoardService;
 import com.example.INFO.domain.s3service.S3ImageService;
 import com.example.INFO.domain.user.service.AuthUserService;
@@ -92,5 +93,12 @@ public class BoardController {
 
         BoardPageResponse response = boardService.getBoardsByCategory(categoryName, page, size);
         return ResponseEntity.ok(response);
+    }
+    // ✅ 어제 좋아요 기준 상위 3개 조회 API 추가
+    @Operation(summary = "어제 좋아요 기준 상위 3개 게시글 조회", description = "어제 가장 많은 좋아요를 받은 게시글 3개를 반환합니다.")
+    @GetMapping("/search/top3-likes-yesterday")
+    public ResponseEntity<List<TopLikedBoardResponse>> getTop3LikedBoardsFromYesterday() {
+        List<TopLikedBoardResponse> responses = boardService.getTop3LikedBoardsFromYesterday();
+        return ResponseEntity.ok(responses);
     }
 }

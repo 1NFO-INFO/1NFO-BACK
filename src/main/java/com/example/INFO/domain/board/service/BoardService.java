@@ -8,6 +8,7 @@ import com.example.INFO.domain.board.dto.req.BoardUpdateRequest;
 import com.example.INFO.domain.board.dto.res.BoardPageResponse;
 import com.example.INFO.domain.board.dto.res.BoardResponse;
 import com.example.INFO.domain.board.dto.res.BoardSimpleResponse;
+import com.example.INFO.domain.board.dto.res.TopLikedBoardResponse;
 import com.example.INFO.domain.s3service.S3ImageService;
 import com.example.INFO.domain.user.model.entity.UserEntity;
 import com.example.INFO.domain.user.repository.UserRepository;
@@ -25,6 +26,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -125,6 +129,33 @@ public class BoardService {
         Page<Board> boardPage = boardRepository.findByCategory(categoryEnum, pageable);
         return convertToBoardPageResponse(boardPage);
     }
+    // 좋아요 많은 상위 3개 게시글
+    @Transactional(readOnly = true)
+    public List<TopLikedBoardResponse> getTop3BoardsByLikes() {
+        Pageable pageable = PageRequest.of(0, 3);
+        List<Board> boards = boardRepository.findTop3ByLikesCount(pageable);
+
+        return boards.stream()
+                .map(this::convertToTopLikedBoardResponse)
+                .collect(Collectors.toList());
+    }
+    //좋아요 갱신
+    @Transactional(readOnly = true)
+    public List<TopLikedBoardResponse> getTop3LikedBoardsFromYesterday() {
+        ZoneId zoneId = ZoneId.of("Asia/Seoul");
+        LocalDateTime start = LocalDate.now(zoneId).minusDays(1).atStartOfDay();
+        LocalDateTime end = start.plusDays(1).minusNanos(1);
+
+        Pageable pageable = PageRequest.of(0, 3);
+        List<Board> topBoards = boardRepository.findTop3ByLikes(start, end, pageable);
+
+        log.info("🔥 어제 좋아요 기준 인기 게시글 조회 기간: {} ~ {}", start, end);
+        log.info("📌 조회된 게시글 개수: {}", topBoards.size());
+
+        return topBoards.stream()
+                .map(this::convertToTopLikedBoardResponse)
+                .collect(Collectors.toList());
+    }
 
     // Board → BoardResponse 변환
     private BoardResponse convertToBoardResponse(Board board) {
@@ -158,6 +189,15 @@ public class BoardService {
                 .content(board.getContent())
                 .likeCount(board.getLikeCount())
                 .commentCount(board.getComments().size())
+                .build();
+    }
+    // Board → TopLikedBoardResponse 변환
+    private TopLikedBoardResponse convertToTopLikedBoardResponse(Board board) {
+        return TopLikedBoardResponse.builder()
+                .title(board.getTitle())
+                .category(board.getCategory_name().name())
+                .createdTime(board.getCreatedTime())
+                .updatedTime(board.getUpdatedTime())
                 .build();
     }
 }
