@@ -43,9 +43,8 @@ public class Comment extends BaseEntity {
 
     // 댓글의 좋아요 개수 반환
     public int getLikeCount() {
-        return likes.size();
-    }
-    // content 필드 변경 메서드
+        return likes == null ? 0 : likes.size();
+    }    // content 필드 변경 메서드
     public Comment updateContent(String newContent) {
         this.content = newContent;
         return this;
