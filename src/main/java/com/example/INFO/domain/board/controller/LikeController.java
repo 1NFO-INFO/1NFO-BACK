@@ -43,4 +43,12 @@ public class LikeController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "댓글 좋아요 취소", description = "댓글 좋아요를 취소합니다.")
+    @DeleteMapping("/comment/{commentId}")
+    public ResponseEntity<CommentLikeResponse> unlikeComment(@PathVariable Long commentId) {
+        Long userId = authUserService.getAuthenticatedUserId(); // ✅ 현재 로그인된 사용자 ID 가져오기
+        CommentLikeResponse response = likeService.unlikeComment(userId, commentId);
+        return ResponseEntity.ok(response);
+    }
+
 }

@@ -94,6 +94,22 @@ public class LikeService {
                 .likeCount(comment.getLikeCount()) // 현재 좋아요 개수 반환
                 .build();
     }
+    // 댓글 좋아요 취소
+    @Transactional
+    public CommentLikeResponse unlikeComment(Long userId, Long commentId) {
+        Like like = likeRepository.findByUserIdAndCommentId(userId, commentId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Like not found"));
 
+        likeRepository.delete(like);
+        likeRepository.flush();
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Comment not found"));
+
+        return CommentLikeResponse.builder()
+                .commentId(commentId)
+                .likeCount(comment.getLikeCount())
+                .build();
+    }
 
 }
