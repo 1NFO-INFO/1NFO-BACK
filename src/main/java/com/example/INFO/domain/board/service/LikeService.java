@@ -49,4 +49,23 @@ public class LikeService {
                 .likeCount(board.getLikeCount()) // 현재 좋아요 개수 반환
                 .build();
     }
+
+    // 게시글 좋아요 취소
+    @Transactional
+    public LikeResponse unlikeBoard(Long userId, Long boardId) {
+        Like like = likeRepository.findByUserIdAndBoardId(userId, boardId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Like not found"));
+
+        likeRepository.delete(like);
+        likeRepository.flush();
+
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Board not found"));
+
+        return LikeResponse.builder()
+                .boardId(boardId)
+                .likeCount(board.getLikeCount())
+                .build();
+    }
+
 }
