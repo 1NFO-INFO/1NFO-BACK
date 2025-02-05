@@ -1,6 +1,7 @@
 package com.example.INFO.domain.board.controller;
 
 import com.example.INFO.domain.board.dto.req.BoardCreateRequest;
+import com.example.INFO.domain.board.dto.res.BoardResponse;
 import com.example.INFO.domain.board.service.BoardService;
 import com.example.INFO.domain.s3service.S3ImageService;
 import com.example.INFO.domain.user.service.AuthUserService;
@@ -14,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/boards")
@@ -50,5 +53,19 @@ public class BoardController {
         boardService.deleteBoard(id, userId);
         return ResponseEntity.ok("Board deleted successfully");
     }
+    // 단일 게시글 조회
+    @Operation(summary = "단일 게시글 조회", description = "게시글 ID로 특정 게시글을 조회합니다.")
+    @GetMapping("/search/{id}")
+    public ResponseEntity<BoardResponse> getBoard(@PathVariable Long id) {
+        BoardResponse response = boardService.getBoard(id);
+        return ResponseEntity.ok(response);
+    }
 
+    // 모든 게시글 조회
+    @Operation(summary = "모든 게시글 조회", description = "모든 게시글을 조회합니다.")
+    @GetMapping("/search")
+    public ResponseEntity<List<BoardResponse>> getAllBoards() {
+        List<BoardResponse> responses = boardService.getAllBoards();
+        return ResponseEntity.ok(responses);
+    }
 }

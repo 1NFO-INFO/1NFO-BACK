@@ -7,6 +7,7 @@ import com.example.INFO.domain.user.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -27,6 +28,7 @@ public class SecurityConfig {
         http.csrf(CsrfConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
+                                .requestMatchers(HttpMethod.GET, "/api/v1/boards/search/**").permitAll()
                                 .requestMatchers("/users", "/users/login", "/users/refresh").permitAll()
                                 .anyRequest().authenticated()
                 ).sessionManagement(sessionManagement -> sessionManagement
