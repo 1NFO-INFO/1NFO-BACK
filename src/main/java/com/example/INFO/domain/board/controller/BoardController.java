@@ -94,6 +94,12 @@ public class BoardController {
         BoardPageResponse response = boardService.getBoardsByCategory(categoryName, page, size);
         return ResponseEntity.ok(response);
     }
+    @Operation(summary = "좋아요 순 상위 3개 게시글 조회", description = "좋아요 수가 가장 많은 게시글 3개를 반환합니다.")
+    @GetMapping("/search/top3-likes")
+    public ResponseEntity<List<TopLikedBoardResponse>> getTop3BoardsByLikes() {
+        List<TopLikedBoardResponse> responses = boardService.getTop3BoardsByLikes();
+        return ResponseEntity.ok(responses);
+    }
     // ✅ 어제 좋아요 기준 상위 3개 조회 API 추가
     @Operation(summary = "어제 좋아요 기준 상위 3개 게시글 조회", description = "어제 가장 많은 좋아요를 받은 게시글 3개를 반환합니다.")
     @GetMapping("/search/top3-likes-yesterday")
