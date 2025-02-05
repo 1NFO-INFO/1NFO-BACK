@@ -100,11 +100,23 @@ public class BoardController {
         List<TopLikedBoardResponse> responses = boardService.getTop3BoardsByLikes();
         return ResponseEntity.ok(responses);
     }
-    // ✅ 어제 좋아요 기준 상위 3개 조회 API 추가
+    // 어제 좋아요 기준 상위 3개 조회 API 추가
     @Operation(summary = "어제 좋아요 기준 상위 3개 게시글 조회", description = "어제 가장 많은 좋아요를 받은 게시글 3개를 반환합니다.")
     @GetMapping("/search/top3-likes-yesterday")
     public ResponseEntity<List<TopLikedBoardResponse>> getTop3LikedBoardsFromYesterday() {
         List<TopLikedBoardResponse> responses = boardService.getTop3LikedBoardsFromYesterday();
         return ResponseEntity.ok(responses);
     }
+    //나의 게시물 조회
+    @Operation(summary = "내가 작성한 게시글 조회 (무한 스크롤)", description = "현재 로그인한 사용자가 작성한 게시글을 10개 단위로 페이징 조회합니다.")
+    @GetMapping("/my")
+    public ResponseEntity<BoardPageResponse> getMyBoards(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Long userId = authUserService.getAuthenticatedUserId(); // 현재 로그인된 사용자 ID 가져오기
+        BoardPageResponse response = boardService.getMyBoards(userId, page, size);
+        return ResponseEntity.ok(response);
+    }
+
 }

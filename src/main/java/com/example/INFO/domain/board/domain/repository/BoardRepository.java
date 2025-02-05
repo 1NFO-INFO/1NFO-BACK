@@ -29,5 +29,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findTop3ByLikes(@Param("start") LocalDateTime start,
                                 @Param("end") LocalDateTime end,
                                 Pageable pageable);
-
+    //나의 게시글 조회
+    Page<Board> findByUserId(Long userId, Pageable pageable);
 }

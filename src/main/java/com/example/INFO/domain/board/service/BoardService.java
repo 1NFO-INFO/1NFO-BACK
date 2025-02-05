@@ -156,6 +156,15 @@ public class BoardService {
                 .map(this::convertToTopLikedBoardResponse)
                 .collect(Collectors.toList());
     }
+    //나의 게시물 조회.
+    @Transactional(readOnly = true)
+    public BoardPageResponse getMyBoards(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdTime"));
+
+        Page<Board> boardPage = boardRepository.findByUserId(userId, pageable);
+        return convertToBoardPageResponse(boardPage);
+    }
+
 
     // Board → BoardResponse 변환
     private BoardResponse convertToBoardResponse(Board board) {
