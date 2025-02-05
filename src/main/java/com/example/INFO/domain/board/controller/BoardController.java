@@ -1,6 +1,7 @@
 package com.example.INFO.domain.board.controller;
 
 import com.example.INFO.domain.board.dto.req.BoardCreateRequest;
+import com.example.INFO.domain.board.dto.req.BoardUpdateRequest;
 import com.example.INFO.domain.board.dto.res.BoardResponse;
 import com.example.INFO.domain.board.service.BoardService;
 import com.example.INFO.domain.s3service.S3ImageService;
@@ -30,7 +31,7 @@ public class BoardController {
     // 게시글 작성
     @Operation(summary = "게시글 작성", description = "이미지 업로드 포함하여 게시글을 작성합니다.")
     @ApiResponse(responseCode = "201", description = "게시글 생성 성공")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value="/create",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> createBoard(
             @RequestParam(value = "image", required = false) MultipartFile image,
             @RequestPart("request") @Valid BoardCreateRequest request) {
@@ -67,5 +68,17 @@ public class BoardController {
     public ResponseEntity<List<BoardResponse>> getAllBoards() {
         List<BoardResponse> responses = boardService.getAllBoards();
         return ResponseEntity.ok(responses);
+    }
+    // 게시글 수정
+    @Operation(summary = "게시글 수정", description = "게시글 내용을 수정합니다. (이미지 선택 가능)")
+    @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<BoardResponse> updateBoard(
+            @PathVariable Long id,
+            @RequestPart("request") @Valid BoardUpdateRequest request,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
+
+        Long userId = authUserService.getAuthenticatedUserId(); // 현재 로그인한 사용자 ID 가져오기
+        BoardResponse response = boardService.updateBoard(id, userId, request, image);
+        return ResponseEntity.ok(response);
     }
 }
