@@ -1,11 +1,14 @@
 package com.example.INFO.user.service;
 
 import com.example.INFO.user.dto.JwtTokenDto;
+import com.example.INFO.user.dto.KakaoOAuthUserInfoDto;
 import com.example.INFO.user.exception.UserException;
 import com.example.INFO.user.exception.UserExceptionType;
+import com.example.INFO.user.model.constant.OAuthProvider;
 import com.example.INFO.user.model.entity.LocalAuthDetailsEntity;
 import com.example.INFO.user.properties.JwtProperties;
 import com.example.INFO.user.repository.LocalAuthDetailsRepository;
+import com.example.INFO.user.repository.OAuthDetailsRepository;
 import com.example.INFO.user.repository.RefreshTokenRepository;
 import com.example.INFO.user.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -25,18 +28,18 @@ class UserServiceTest {
 
     private final UserRepository userRepository = mock(UserRepository.class);
     private final LocalAuthDetailsRepository localAuthDetailsRepository = mock(LocalAuthDetailsRepository.class);
+    private final OAuthDetailsRepository oAuthDetailsRepository = mock(OAuthDetailsRepository.class);
     private final RefreshTokenRepository refreshTokenRepository = mock(RefreshTokenRepository.class);
     private final PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
     private final JwtTokenService jwtTokenService = mock(JwtTokenService.class);
-    private final JwtProperties jwtProperties = mock(JwtProperties.class);
 
     private final UserService userService = new UserService(
             userRepository,
             localAuthDetailsRepository,
+            oAuthDetailsRepository,
             refreshTokenRepository,
             passwordEncoder,
-            jwtTokenService,
-            jwtProperties
+            jwtTokenService
     );
 
     @Test
@@ -59,6 +62,30 @@ class UserServiceTest {
 
         UserException e = assertThrows(UserException.class, () -> userService.createUser(username, password));
         assertThat(e.getType()).isEqualTo(UserExceptionType.DUPLICATED_USERNAME);
+    }
+
+    @Test
+    void 회원_생성_카카오_OAuth() {
+        String email = "email";
+        OAuthProvider provider  = OAuthProvider.KAKAO;
+        KakaoOAuthUserInfoDto userInfo = KakaoOAuthUserInfoDto.of(email);
+
+        when(oAuthDetailsRepository.existsByEmailAndProvider(email, provider)).thenReturn(false);
+
+        assertThatCode(() -> userService.createUser(userInfo))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    void 카카오_OAuth_회원_생성시_이미_존재하는_username이_있다면_예외가_발생한다() {
+        String email = "email";
+        OAuthProvider provider  = OAuthProvider.KAKAO;
+        KakaoOAuthUserInfoDto userInfo = KakaoOAuthUserInfoDto.of(email);
+
+        when(oAuthDetailsRepository.existsByEmailAndProvider(email, provider)).thenReturn(true);
+
+        UserException e = assertThrows(UserException.class, () -> userService.createUser(userInfo));
+        assertThat(e.getType()).isEqualTo(UserExceptionType.DUPLICATED_EMAIL);
     }
 
     @Test

@@ -27,7 +27,10 @@ public class SecurityConfig {
         http.csrf(CsrfConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/users", "/users/login", "/users/refresh").permitAll()
+                                .requestMatchers(
+                                        "/users", "/users/login", "/users/refresh",
+                                        "/oauth/kakao/authorize", "/oauth/kakao/callback"
+                                ).permitAll()
                                 .anyRequest().authenticated()
                 ).sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

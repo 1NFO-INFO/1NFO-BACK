@@ -31,6 +31,9 @@ public class UserEntity {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private LocalAuthDetailsEntity localAuthDetails;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private OAuthDetailsEntity oAuthDetailsEntity;
+
     @Column(name = "registered_at", nullable = false)
     private LocalDateTime registeredAt;
 
