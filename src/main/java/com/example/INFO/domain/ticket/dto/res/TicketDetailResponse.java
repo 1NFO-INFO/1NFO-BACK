@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Schema(description = "티켓 응답 데이터 모델")
-public class TicketResponse {
+@Schema(description = "티켓 상세 응답 데이터 모델")
+public class TicketDetailResponse {
     @Schema(description = "공연 ID")
     private String seq;
 

@@ -22,10 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -149,46 +146,52 @@ public class TicketService {
             return null; // 오류 발생 시 null 반환
         }
     }
+    //페이징 기능 삽입
+    private List<TicketResponse> getPagedList(List<TicketResponse> list, int page, int size) {
+        int start = page * size;
+        int end = Math.min(start + size, list.size());
+
+        if (start > list.size()) {
+            return Collections.emptyList();
+        }
+        return list.subList(start, end);
+    }
 
     // 높은 할인율순 정렬
-    public List<TicketResponse> getSortedByDiscountRateDesc() {
-        return repository.findAll().stream()
-                .sorted((data1, data2) -> {
-                    Integer rate1 = parseDiscountRate(data1.getDiscountRate());
-                    Integer rate2 = parseDiscountRate(data2.getDiscountRate());
-                    return rate2.compareTo(rate1); // 높은 값 → 낮은 값 순
-                })
-                .map(this::toResponseDTO) // 엔티티 → DTO 변환
+    public List<TicketResponse> getSortedByDiscountRateDesc(int page, int size) {
+        List<TicketResponse> sortedList = repository.findAll().stream()
+                .sorted(Comparator.comparing((TicketData data) -> parseDiscountRate(data.getDiscountRate())).reversed())
+                .map(this::toResponseDTO)
                 .collect(Collectors.toList());
+
+        return getPagedList(sortedList, page, size);
     }
 
     // startDate 최신순 정렬 (가장 최근 날짜가 위로)
-    public List<TicketResponse> getSortedByStartDateDesc() {
-        return repository.findAll().stream()
-                .sorted((data1, data2) -> {
-                    LocalDate date1 = parseDate(data1.getStartDate());
-                    LocalDate date2 = parseDate(data2.getStartDate());
-                    return date2.compareTo(date1); // 최신 날짜 → 과거 날짜 순
-                })
-                .map(this::toResponseDTO) // 엔티티 → DTO 변환
+    public List<TicketResponse> getSortedByStartDateDesc(int page, int size) {
+        List<TicketResponse> sortedList = repository.findAll().stream()
+                .sorted(Comparator.comparing((TicketData data) -> parseDate(data.getStartDate())).reversed())
+                .map(this::toResponseDTO)
                 .collect(Collectors.toList());
+
+        return getPagedList(sortedList, page, size);
     }
+
     // 마감 임박순
-    public List<TicketResponse> getSortedByEndDateClosestToToday() {
+    public List<TicketResponse> getSortedByEndDateClosestToToday(int page, int size) {
         LocalDate today = LocalDate.now();
 
-        return repository.findAll().stream()
+        List<TicketResponse> sortedList = repository.findAll().stream()
                 .filter(ticket -> {
                     LocalDate startDate = convertToDate(ticket.getStartDate());
                     LocalDate endDate = convertToDate(ticket.getEndDate());
-
-                    //필터링 조건: endDate가 오늘 이후이고, startDate가 null이 아니어야 함
                     return startDate != null && endDate != null && !startDate.isAfter(today) && !endDate.isBefore(today);
                 })
-                //  endDate 기준으로 가까운 순서대로 정렬
                 .sorted(Comparator.comparing(ticket -> convertToDate(ticket.getEndDate())))
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
+
+        return getPagedList(sortedList, page, size);
     }
 
     //
@@ -205,22 +208,25 @@ public class TicketService {
     }
 
     //  공연장 필터링
-    public List<TicketResponse> filterByPlaces(List<String> places) {
-        return repository.findAll().stream()
+    public List<TicketResponse> filterByPlaces(List<String> places, int page, int size) {
+        List<TicketResponse> filteredList = repository.findAll().stream()
                 .filter(ticket -> places == null || places.isEmpty() || places.contains(ticket.getPlace()))
-                .sorted(Comparator.comparing(TicketData::getEndDate).reversed()) // endDate 최신순 정렬
-                .map(this::toResponseDTO) // 엔티티 → DTO 변환
+                .sorted(Comparator.comparing(TicketData::getEndDate).reversed())
+                .map(this::toResponseDTO)
                 .collect(Collectors.toList());
+
+        return getPagedList(filteredList, page, size);
     }
 
-
     // 지역 필터링
-    public List<TicketResponse> filterByAreas(List<String> areas) {
-        return repository.findAll().stream()
+    public List<TicketResponse> filterByAreas(List<String> areas, int page, int size) {
+        List<TicketResponse> filteredList = repository.findAll().stream()
                 .filter(ticket -> areas == null || areas.isEmpty() || areas.contains(ticket.getArea()))
-                .sorted(Comparator.comparing(TicketData::getEndDate).reversed()) // endDate 최신순 정렬
-                .map(this::toResponseDTO) // 엔티티 → DTO 변환
+                .sorted(Comparator.comparing(TicketData::getEndDate).reversed())
+                .map(this::toResponseDTO)
                 .collect(Collectors.toList());
+
+        return getPagedList(filteredList, page, size);
     }
 
     //단건 조회
@@ -232,6 +238,7 @@ public class TicketService {
     // 상세 정보를 포함한 Response DTO 변환
     private TicketResponse toDetailResponseDTO(TicketData ticketData) {
         return TicketResponse.builder()
+                .seq((ticketData.getSeq()))
                 .title(ticketData.getTitle())
                 .discountRate(ticketData.getDiscountRate())
                 .price(ticketData.getPrice())
@@ -246,6 +253,7 @@ public class TicketService {
     // 엔티티 → Response DTO 변환
     private TicketResponse toResponseDTO(TicketData ticketData) {
         return TicketResponse.builder()
+                .seq((ticketData.getSeq()))
                 .title(ticketData.getTitle())
                 .discountRate(ticketData.getDiscountRate())
                 .price(ticketData.getPrice())
