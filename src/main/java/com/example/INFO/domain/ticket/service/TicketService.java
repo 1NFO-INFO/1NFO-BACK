@@ -203,7 +203,14 @@ public class TicketService {
         }
     }
 
-
+    //  공연장 필터링
+    public List<TicketResponse> filterByPlaces(List<String> places) {
+        return repository.findAll().stream()
+                .filter(ticket -> places == null || places.isEmpty() || places.contains(ticket.getPlace()))
+                .sorted(Comparator.comparing(TicketData::getEndDate).reversed()) // endDate 최신순 정렬
+                .map(this::toResponseDTO) // 엔티티 → DTO 변환
+                .collect(Collectors.toList());
+    }
 
 
 

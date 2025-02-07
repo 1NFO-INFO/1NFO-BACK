@@ -1,16 +1,16 @@
 package com.example.INFO.domain.ticket.controller;
 
+import com.example.INFO.domain.ticket.dto.req.TicketPlaceFilterRequest;
 import com.example.INFO.domain.ticket.dto.res.TicketResponse;
 import com.example.INFO.domain.ticket.service.TicketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -54,5 +54,16 @@ public class TicketController {
     @GetMapping("/end-date-soon")
     public List<TicketResponse> getSortedByEndDate() {
         return ticketService.getSortedByEndDateClosestToToday();
+    }
+    //  공연장 필터링
+    @Operation(summary = "공연장 필터링", description = "입력한 공연장 리스트에 해당하는 티켓을 반환")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "필터링된 티켓 목록",
+                    content = @Content(schema = @Schema(implementation = TicketResponse.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @PostMapping("/filter-places")
+    public List<TicketResponse> filterByPlaces(@RequestBody TicketPlaceFilterRequest request) {
+        return ticketService.filterByPlaces(request.getPlaces());
     }
 }
