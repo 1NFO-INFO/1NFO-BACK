@@ -1,6 +1,5 @@
 package com.example.INFO.user.dto;
 
-import com.example.INFO.user.model.entity.LocalAuthDetailsEntity;
 import com.example.INFO.user.model.entity.UserEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,17 +16,11 @@ import java.util.List;
 public class UserDetailsImpl implements UserDetails {
 
     long id;
-    String username;
-    String password;
     boolean isEnabled;
 
     public static UserDetails fromEntity(UserEntity user) {
-        LocalAuthDetailsEntity localAuthDetails = user.getLocalAuthDetails();
-
         return new UserDetailsImpl(
                 user.getId(),
-                localAuthDetails.getUsername(),
-                localAuthDetails.getPassword(),
                 user.getDeletedAt() != null
         );
     }
@@ -39,12 +32,12 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getPassword() {
-        return this.password;
+        return null;
     }
 
     @Override
     public String getUsername() {
-        return this.username;
+        return String.valueOf(this.id);
     }
 
     @Override

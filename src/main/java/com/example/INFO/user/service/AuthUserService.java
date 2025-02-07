@@ -25,10 +25,6 @@ public class AuthUserService {
         }
     }
 
-    public String getAuthenticatedUsername() {
-        return getAuthenticatedUser().getUsername();
-    }
-
     public long getAuthenticatedUserId() {
         return getAuthenticatedUser().getId();
     }

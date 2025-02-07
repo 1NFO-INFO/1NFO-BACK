@@ -6,19 +6,17 @@ import com.example.INFO.user.exception.UserExceptionType;
 import com.example.INFO.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class CustomUserDetailsService {
 
     private final UserRepository userRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByLocalAuthDetailsUsername(username)
+    public UserDetails loadUserByUserId(long userId) throws UsernameNotFoundException {
+        return userRepository.findById(userId)
                 .map(UserDetailsImpl::fromEntity)
                 .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
     }

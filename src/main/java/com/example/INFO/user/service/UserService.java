@@ -9,7 +9,6 @@ import com.example.INFO.user.model.entity.LocalAuthDetailsEntity;
 import com.example.INFO.user.model.entity.OAuthDetailsEntity;
 import com.example.INFO.user.model.entity.RefreshTokenEntity;
 import com.example.INFO.user.model.entity.UserEntity;
-import com.example.INFO.user.properties.JwtProperties;
 import com.example.INFO.user.repository.LocalAuthDetailsRepository;
 import com.example.INFO.user.repository.OAuthDetailsRepository;
 import com.example.INFO.user.repository.RefreshTokenRepository;
@@ -75,7 +74,7 @@ public class UserService {
         OAuthDetailsEntity kakaoOAuthDetails = oAuthDetailsRepository.findByEmailAndProvider(kakaoOAuthUserInfoDto.getEmail(), OAuthProvider.KAKAO)
                 .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
 
-        JwtTokenDto jwtTokenDto = jwtTokenService.generateJwtToken(email);
+        JwtTokenDto jwtTokenDto = jwtTokenService.generateJwtToken(kakaoOAuthDetails.getId());
         String refreshToken = jwtTokenDto.getRefreshToken();
         LocalDateTime refreshTokenIssuedAt = jwtTokenService.getIssuedAt(refreshToken);
         LocalDateTime refreshTokenExpiration = jwtTokenService.getExpiration(refreshToken);
@@ -102,7 +101,7 @@ public class UserService {
             throw new UserException(UserExceptionType.INVALID_PASSWORD);
         }
 
-        JwtTokenDto jwtTokenDto = jwtTokenService.generateJwtToken(username);
+        JwtTokenDto jwtTokenDto = jwtTokenService.generateJwtToken(localAuthDetails.getId());
         String refreshToken = jwtTokenDto.getRefreshToken();
         LocalDateTime refreshTokenIssuedAt = jwtTokenService.getIssuedAt(refreshToken);
         LocalDateTime refreshTokenExpiration = jwtTokenService.getExpiration(refreshToken);
@@ -125,7 +124,7 @@ public class UserService {
         }
 
         // refresh token이 유효하다면 새로운 JWT token을 발급
-        String username = jwtTokenService.getUsername(refreshToken);
-        return jwtTokenService.generateJwtToken(username);
+        long userId = jwtTokenService.getUserId(refreshToken);
+        return jwtTokenService.generateJwtToken(userId);
     }
 }

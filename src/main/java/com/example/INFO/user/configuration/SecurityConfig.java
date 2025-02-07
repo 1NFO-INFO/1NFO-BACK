@@ -2,8 +2,8 @@ package com.example.INFO.user.configuration;
 
 import com.example.INFO.user.configuration.filter.JwtTokenFilter;
 import com.example.INFO.user.exception.CustomAuthenticationEntryPoint;
+import com.example.INFO.user.service.CustomUserDetailsService;
 import com.example.INFO.user.service.JwtTokenService;
-import com.example.INFO.user.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtTokenService jwtTokenService;
-    private final UserDetailsServiceImpl userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
