@@ -1,5 +1,6 @@
 package com.example.INFO.domain.favorite.controller;
 
+import com.example.INFO.domain.favorite.dto.res.PagedResponseDto;
 import com.example.INFO.domain.favorite.dto.res.TicketDataResponseDto;
 import com.example.INFO.domain.favorite.service.FavoriteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,12 +57,10 @@ public class FavoriteController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping("/my/ticket")
-    public ResponseEntity<Page<TicketDataResponseDto>> getFavoriteTickets(
-            @RequestParam(defaultValue = "0") int page
-    ) {
+    public ResponseEntity<PagedResponseDto<TicketDataResponseDto>> getFavoriteTickets(
+            @RequestParam(defaultValue = "0") int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdTime"));
-        Page<TicketDataResponseDto> favoriteTickets = favoriteService.getFavoriteTickets(pageable);
-        return ResponseEntity.ok(favoriteTickets);
+        return ResponseEntity.ok(favoriteService.getFavoriteTickets(pageable));
     }
 
 }

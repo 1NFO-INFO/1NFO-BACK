@@ -2,6 +2,7 @@ package com.example.INFO.domain.favorite.service;
 
 import com.example.INFO.domain.favorite.domain.Favorite;
 import com.example.INFO.domain.favorite.domain.repository.FavoriteRepository;
+import com.example.INFO.domain.favorite.dto.res.PagedResponseDto;
 import com.example.INFO.domain.favorite.dto.res.TicketDataResponseDto;
 import com.example.INFO.domain.ticket.domain.TicketData;
 import com.example.INFO.domain.ticket.domain.repository.TicketDataRepository;
@@ -60,13 +61,23 @@ public class FavoriteService {
         favoriteRepository.delete(favorite);
     }
     //좋아요 누른 항목 조회
-    public Page<TicketDataResponseDto> getFavoriteTickets(Pageable pageable) {
+    public PagedResponseDto<TicketDataResponseDto> getFavoriteTickets(Pageable pageable) {
         long userId = authUserService.getAuthenticatedUserId();
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
 
-        return favoriteRepository.findByUser(user, pageable)
+        Page<TicketDataResponseDto> favoriteTickets = favoriteRepository.findByUser(user, pageable)
                 .map(favorite -> mapToResponseDto(favorite.getTicket())); // 변환 메서드 호출
+
+        // ✅ Page → PagedResponseDto 변환
+        return new PagedResponseDto<>(
+                favoriteTickets.getContent(),
+                favoriteTickets.getNumber(),
+                favoriteTickets.getSize(),
+                favoriteTickets.getTotalElements(),
+                favoriteTickets.getTotalPages(),
+                favoriteTickets.isLast()
+        );
     }
     private TicketDataResponseDto mapToResponseDto(TicketData ticket) {
         return new TicketDataResponseDto(
