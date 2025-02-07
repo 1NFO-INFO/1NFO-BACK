@@ -2,6 +2,7 @@ package com.example.INFO.domain.favorite.service;
 
 import com.example.INFO.domain.favorite.domain.Favorite;
 import com.example.INFO.domain.favorite.domain.repository.FavoriteRepository;
+import com.example.INFO.domain.favorite.dto.res.TicketDataResponseDto;
 import com.example.INFO.domain.ticket.domain.TicketData;
 import com.example.INFO.domain.ticket.domain.repository.TicketDataRepository;
 import com.example.INFO.domain.user.exception.UserException;
@@ -10,6 +11,8 @@ import com.example.INFO.domain.user.model.entity.UserEntity;
 import com.example.INFO.domain.user.repository.UserRepository;
 import com.example.INFO.domain.user.service.AuthUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,5 +58,27 @@ public class FavoriteService {
                 .orElseThrow(() -> new IllegalStateException("좋아요하지 않은 티켓입니다."));
 
         favoriteRepository.delete(favorite);
+    }
+    //좋아요 누른 항목 조회
+    public Page<TicketDataResponseDto> getFavoriteTickets(Pageable pageable) {
+        long userId = authUserService.getAuthenticatedUserId();
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
+
+        return favoriteRepository.findByUser(user, pageable)
+                .map(favorite -> mapToResponseDto(favorite.getTicket())); // 변환 메서드 호출
+    }
+    private TicketDataResponseDto mapToResponseDto(TicketData ticket) {
+        return new TicketDataResponseDto(
+                ticket.getSeq(),
+                ticket.getTitle(),
+                ticket.getDiscountRate(),
+                ticket.getPrice(),
+                ticket.getStartDate(),
+                ticket.getEndDate(),
+                ticket.getPlace(),
+                ticket.getArea(),
+                ticket.getImg()
+        );
     }
 }
