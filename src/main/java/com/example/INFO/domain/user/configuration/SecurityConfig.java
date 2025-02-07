@@ -28,19 +28,19 @@ public class SecurityConfig {
         http.csrf(CsrfConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->authorizeRequests
                         .requestMatchers(
-                                    "/swagger-ui/**",
-                                    "/swagger-ui.html",
-                                    "/v3/api-docs/**",
-                                    "/v3/api-docs.yaml",
-                                    "/swagger-resources/**",
-                                    "/webjars/**"
-                                ).permitAll()
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**"
+                        ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/boards/search/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/boards/category").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/comments/search/board/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/comments/**").permitAll()
                         .requestMatchers("/users", "/users/login", "/users/refresh").permitAll()
-                                .anyRequest().authenticated()
+                        .requestMatchers("/api/v1/ticket/**").permitAll()
+                        .anyRequest().authenticated()
                 ).sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
