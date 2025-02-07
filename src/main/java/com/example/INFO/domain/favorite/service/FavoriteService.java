@@ -42,4 +42,18 @@ public class FavoriteService {
                 .ticket(ticket)
                 .build());
     }
+    //좋아요 취소 메소드
+    public void unlikeTicket(String ticketSeq) {
+        long userId = authUserService.getAuthenticatedUserId();
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
+
+        TicketData ticket = ticketDataRepository.findById(ticketSeq)
+                .orElseThrow(() -> new IllegalArgumentException("해당 티켓이 존재하지 않습니다."));
+
+        Favorite favorite = favoriteRepository.findByUserAndTicket(user, ticket)
+                .orElseThrow(() -> new IllegalStateException("좋아요하지 않은 티켓입니다."));
+
+        favoriteRepository.delete(favorite);
+    }
 }
