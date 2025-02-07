@@ -213,6 +213,14 @@ public class TicketService {
     }
 
 
+    // 지역 필터링
+    public List<TicketResponse> filterByAreas(List<String> areas) {
+        return repository.findAll().stream()
+                .filter(ticket -> areas == null || areas.isEmpty() || areas.contains(ticket.getArea()))
+                .sorted(Comparator.comparing(TicketData::getEndDate).reversed()) // endDate 최신순 정렬
+                .map(this::toResponseDTO) // 엔티티 → DTO 변환
+                .collect(Collectors.toList());
+    }
 
     // 엔티티 → Response DTO 변환
     private TicketResponse toResponseDTO(TicketData ticketData) {

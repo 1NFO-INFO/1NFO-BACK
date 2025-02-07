@@ -1,5 +1,6 @@
 package com.example.INFO.domain.ticket.controller;
 
+import com.example.INFO.domain.ticket.dto.req.TicketAreasFilterRequest;
 import com.example.INFO.domain.ticket.dto.req.TicketPlaceFilterRequest;
 import com.example.INFO.domain.ticket.dto.res.TicketResponse;
 import com.example.INFO.domain.ticket.service.TicketService;
@@ -65,5 +66,17 @@ public class TicketController {
     @PostMapping("/filter-places")
     public List<TicketResponse> filterByPlaces(@RequestBody TicketPlaceFilterRequest request) {
         return ticketService.filterByPlaces(request.getPlaces());
+    }
+
+    // 지역 필터링
+    @Operation(summary = "지역 필터링", description = "입력한 지역 리스트에 해당하는 티켓을 반환")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "필터링된 티켓 목록",
+                    content = @Content(schema = @Schema(implementation = TicketResponse.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @PostMapping("/filter-areas")
+    public List<TicketResponse> filterByAreas(@RequestBody TicketAreasFilterRequest request) {
+        return ticketService.filterByAreas(request.getAreas());
     }
 }
