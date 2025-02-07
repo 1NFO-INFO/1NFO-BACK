@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/comments/**").permitAll()
                         .requestMatchers("/users", "/users/login", "/users/refresh").permitAll()
                         .requestMatchers("/api/v1/ticket/**").permitAll()
+                        .requestMatchers("/api/v1/favorites/**").authenticated()
                         .anyRequest().authenticated()
                 ).sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
