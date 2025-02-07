@@ -19,6 +19,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -137,6 +139,13 @@ public class TicketService {
             return -1; // 빈 값이나 파싱 실패 시 -1로 설정
         }
     }
+    private LocalDate parseDate(String date) {
+        try {
+            return (date == null || date.isEmpty()) ? LocalDate.MIN : LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        } catch (Exception e) {
+            return null; // 오류 발생 시 null 반환
+        }
+    }
     // 높은 할인율순 정렬
     public List<TicketResponse> getSortedByDiscountRateDesc() {
         return repository.findAll().stream()
@@ -148,6 +157,19 @@ public class TicketService {
                 .map(this::toResponseDTO) // 엔티티 → DTO 변환
                 .collect(Collectors.toList());
     }
+    // startDate 최신순 정렬 (가장 최근 날짜가 위로)
+    public List<TicketResponse> getSortedByStartDateDesc() {
+        return repository.findAll().stream()
+                .sorted((data1, data2) -> {
+                    LocalDate date1 = parseDate(data1.getStartDate());
+                    LocalDate date2 = parseDate(data2.getStartDate());
+                    return date2.compareTo(date1); // 최신 날짜 → 과거 날짜 순
+                })
+                .map(this::toResponseDTO) // 엔티티 → DTO 변환
+                .collect(Collectors.toList());
+    }
+
+
     // 엔티티 → Response DTO 변환
     private TicketResponse toResponseDTO(TicketData ticketData) {
         return TicketResponse.builder()

@@ -37,4 +37,13 @@ public class TicketController {
     public List<TicketResponse> getSortedByDiscountRateDesc() {
         return ticketService.getSortedByDiscountRateDesc();
     }
+
+    //최신순 정렬
+    @Operation(summary = "최신 시작일 순 정렬", description = "공연 시작일이 최신 순서대로 정렬 후 반환")
+    @ApiResponse(responseCode = "200", description = "정렬된 티켓 목록",
+            content = @Content(schema = @Schema(implementation = TicketResponse.class)))
+    @GetMapping("/start-date-desc")
+    public List<TicketResponse> getSortedByStartDateDesc() {
+        return ticketService.getSortedByStartDateDesc();
+    }
 }
