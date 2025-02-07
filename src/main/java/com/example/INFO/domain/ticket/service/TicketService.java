@@ -3,6 +3,7 @@ package com.example.INFO.domain.ticket.service;
 import com.example.INFO.domain.ticket.domain.TicketData;
 import com.example.INFO.domain.ticket.domain.TicketProperties;
 import com.example.INFO.domain.ticket.domain.repository.TicketDataRepository;
+import com.example.INFO.domain.ticket.dto.res.TicketResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -127,5 +129,35 @@ public class TicketService {
             }
         }
         return null;
+    }
+    private Integer parseDiscountRate(String discountRate) {
+        try {
+            return (discountRate == null || discountRate.isEmpty()) ? -1 : Integer.parseInt(discountRate);
+        } catch (Exception e) {
+            return -1; // 빈 값이나 파싱 실패 시 -1로 설정
+        }
+    }
+    // 높은 할인율순 정렬
+    public List<TicketResponse> getSortedByDiscountRateDesc() {
+        return repository.findAll().stream()
+                .sorted((data1, data2) -> {
+                    Integer rate1 = parseDiscountRate(data1.getDiscountRate());
+                    Integer rate2 = parseDiscountRate(data2.getDiscountRate());
+                    return rate2.compareTo(rate1); // 높은 값 → 낮은 값 순
+                })
+                .map(this::toResponseDTO) // 엔티티 → DTO 변환
+                .collect(Collectors.toList());
+    }
+    // 엔티티 → Response DTO 변환
+    private TicketResponse toResponseDTO(TicketData ticketData) {
+        return TicketResponse.builder()
+                .title(ticketData.getTitle())
+                .discountRate(ticketData.getDiscountRate())
+                .price(ticketData.getPrice())
+                .startDate(ticketData.getStartDate())
+                .endDate(ticketData.getEndDate())
+                .place(ticketData.getPlace())
+                .img(ticketData.getImg())
+                .build();
     }
 }
