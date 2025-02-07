@@ -46,4 +46,13 @@ public class TicketController {
     public List<TicketResponse> getSortedByStartDateDesc() {
         return ticketService.getSortedByStartDateDesc();
     }
+
+    // 마감 임박순 정렬
+    @Operation(summary = "마감 임박 순 정렬", description = "마감일이 가까운 순서대로 티켓을 정렬 후 반환")
+    @ApiResponse(responseCode = "200", description = "정렬된 티켓 목록",
+            content = @Content(schema = @Schema(implementation = TicketResponse.class)))
+    @GetMapping("/end-date-soon")
+    public List<TicketResponse> getSortedByEndDate() {
+        return ticketService.getSortedByEndDateClosestToToday();
+    }
 }

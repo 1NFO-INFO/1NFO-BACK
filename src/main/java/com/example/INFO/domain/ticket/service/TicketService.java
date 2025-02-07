@@ -21,8 +21,11 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -146,6 +149,7 @@ public class TicketService {
             return null; // 오류 발생 시 null 반환
         }
     }
+
     // 높은 할인율순 정렬
     public List<TicketResponse> getSortedByDiscountRateDesc() {
         return repository.findAll().stream()
@@ -168,6 +172,39 @@ public class TicketService {
                 .map(this::toResponseDTO) // 엔티티 → DTO 변환
                 .collect(Collectors.toList());
     }
+    // 마감 임박순
+    public List<TicketResponse> getSortedByEndDateClosestToToday() {
+        LocalDate today = LocalDate.now();
+
+        return repository.findAll().stream()
+                .filter(ticket -> {
+                    LocalDate startDate = convertToDate(ticket.getStartDate());
+                    LocalDate endDate = convertToDate(ticket.getEndDate());
+
+                    //필터링 조건: endDate가 오늘 이후이고, startDate가 null이 아니어야 함
+                    return startDate != null && endDate != null && !startDate.isAfter(today) && !endDate.isBefore(today);
+                })
+                //  endDate 기준으로 가까운 순서대로 정렬
+                .sorted(Comparator.comparing(ticket -> convertToDate(ticket.getEndDate())))
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    //
+    private LocalDate convertToDate(String date) {
+        if (date == null || date.trim().isEmpty()) {
+            return null; // ✅ 필터링 과정에서 제거될 수 있도록 null 반환
+        }
+
+        try {
+            return LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        } catch (DateTimeParseException e) {
+            return null; // ✅ 변환 실패 시 null 반환하여 필터링에서 제거되도록 함
+        }
+    }
+
+
+
 
 
     // 엔티티 → Response DTO 변환
