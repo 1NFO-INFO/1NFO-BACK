@@ -25,7 +25,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -161,6 +161,7 @@ public class TicketService {
                 .map(this::toResponseDTO) // 엔티티 → DTO 변환
                 .collect(Collectors.toList());
     }
+
     // startDate 최신순 정렬 (가장 최근 날짜가 위로)
     public List<TicketResponse> getSortedByStartDateDesc() {
         return repository.findAll().stream()
@@ -220,6 +221,26 @@ public class TicketService {
                 .sorted(Comparator.comparing(TicketData::getEndDate).reversed()) // endDate 최신순 정렬
                 .map(this::toResponseDTO) // 엔티티 → DTO 변환
                 .collect(Collectors.toList());
+    }
+
+    //단건 조회
+    public Optional<TicketResponse> getTicketDetail(String id) {
+        return repository.findById(id)
+                .map(this::toDetailResponseDTO);
+    }
+
+    // 상세 정보를 포함한 Response DTO 변환
+    private TicketResponse toDetailResponseDTO(TicketData ticketData) {
+        return TicketResponse.builder()
+                .title(ticketData.getTitle())
+                .discountRate(ticketData.getDiscountRate())
+                .price(ticketData.getPrice())
+                .startDate(ticketData.getStartDate())
+                .endDate(ticketData.getEndDate())
+                .place(ticketData.getPlace())
+                .area(ticketData.getArea())
+                .img(ticketData.getImg())
+                .build();
     }
 
     // 엔티티 → Response DTO 변환

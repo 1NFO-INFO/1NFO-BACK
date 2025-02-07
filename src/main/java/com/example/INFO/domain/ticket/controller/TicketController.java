@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -79,4 +80,19 @@ public class TicketController {
     public List<TicketResponse> filterByAreas(@RequestBody TicketAreasFilterRequest request) {
         return ticketService.filterByAreas(request.getAreas());
     }
+
+    //티켓 상세 조회
+    @Operation(summary = "티켓 상세 조회", description = "특정 티켓 ID로 티켓 상세 정보를 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "티켓 상세 정보",
+                    content = @Content(schema = @Schema(implementation = TicketResponse.class))),
+            @ApiResponse(responseCode = "404", description = "해당 티켓을 찾을 수 없음")
+    })
+    @GetMapping("/search/{id}")
+    public ResponseEntity<TicketResponse> getTicketDetail(@PathVariable String id) {
+        return ticketService.getTicketDetail(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 }
