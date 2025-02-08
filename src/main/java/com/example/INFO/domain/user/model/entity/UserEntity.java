@@ -1,5 +1,6 @@
 package com.example.INFO.domain.user.model.entity;
 
+import com.example.INFO.domain.favorite.domain.Favorite;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,6 +9,8 @@ import lombok.ToString;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "\"user\"")
@@ -30,6 +33,9 @@ public class UserEntity {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private LocalAuthDetailsEntity localAuthDetails;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Favorite> favorites = new ArrayList<>();
 
     @Column(name = "registered_at", nullable = false)
     private LocalDateTime registeredAt;
