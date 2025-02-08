@@ -1,12 +1,12 @@
 package com.example.INFO.user.controller;
 
-import com.example.INFO.user.dto.JwtTokenDto;
-import com.example.INFO.user.dto.request.UserLoginRequest;
-import com.example.INFO.user.dto.request.UserRefreshRequest;
-import com.example.INFO.user.dto.request.UserSignupRequest;
-import com.example.INFO.user.exception.UserException;
-import com.example.INFO.user.exception.UserExceptionType;
-import com.example.INFO.user.service.UserService;
+import com.example.INFO.domain.user.dto.JwtTokenDto;
+import com.example.INFO.domain.user.dto.request.UserLoginRequest;
+import com.example.INFO.domain.user.dto.request.UserRefreshRequest;
+import com.example.INFO.domain.user.dto.request.UserSignupRequest;
+import com.example.INFO.domain.user.exception.UserException;
+import com.example.INFO.domain.user.exception.UserExceptionType;
+import com.example.INFO.domain.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;

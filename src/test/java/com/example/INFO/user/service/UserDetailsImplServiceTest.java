@@ -1,10 +1,11 @@
 package com.example.INFO.user.service;
 
-import com.example.INFO.user.exception.UserException;
-import com.example.INFO.user.exception.UserExceptionType;
-import com.example.INFO.user.model.entity.LocalAuthDetailsEntity;
-import com.example.INFO.user.model.entity.UserEntity;
-import com.example.INFO.user.repository.UserRepository;
+import com.example.INFO.domain.user.exception.UserException;
+import com.example.INFO.domain.user.exception.UserExceptionType;
+import com.example.INFO.domain.user.model.entity.LocalAuthDetailsEntity;
+import com.example.INFO.domain.user.model.entity.UserEntity;
+import com.example.INFO.domain.user.repository.UserRepository;
+import com.example.INFO.domain.user.service.CustomUserDetailsService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

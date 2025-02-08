@@ -1,9 +1,9 @@
 package com.example.INFO.user.controller;
 
-import com.example.INFO.user.dto.JwtTokenDto;
-import com.example.INFO.user.dto.KakaoOAuthUserInfoDto;
-import com.example.INFO.user.service.KakaoOAuthService;
-import com.example.INFO.user.service.UserService;
+import com.example.INFO.domain.user.dto.JwtTokenDto;
+import com.example.INFO.domain.user.dto.KakaoOAuthUserInfoDto;
+import com.example.INFO.domain.user.service.KakaoOAuthService;
+import com.example.INFO.domain.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
