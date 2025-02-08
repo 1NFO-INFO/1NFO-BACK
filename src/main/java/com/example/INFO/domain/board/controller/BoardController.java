@@ -34,7 +34,7 @@ public class BoardController {
     @Operation(summary = "게시글 작성", description = "이미지 업로드 포함하여 게시글을 작성합니다.")
     @ApiResponse(responseCode = "201", description = "게시글 생성 성공")
     @PostMapping(value="/create",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Long> createBoard(
+    public ResponseEntity<String> createBoard(
             @RequestParam(value = "image", required = false) MultipartFile image,
             @RequestPart("request") @Valid BoardCreateRequest request) {
 
@@ -46,7 +46,7 @@ public class BoardController {
         // 게시글 생성 요청에 업로드된 이미지 URL을 추가
         Long boardId = boardService.createBoard(userId, request, imageUrl);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(boardId);
+        return ResponseEntity.status(HttpStatus.CREATED).body("BoardID: "+boardId);
     }
     // 게시글 삭제
     @Operation(summary = "게시글 삭제", description = "게시글을 삭제합니다.")
