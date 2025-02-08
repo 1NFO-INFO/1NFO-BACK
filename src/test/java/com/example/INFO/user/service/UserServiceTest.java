@@ -1,13 +1,15 @@
 package com.example.INFO.user.service;
 
-import com.example.INFO.user.dto.JwtTokenDto;
-import com.example.INFO.user.exception.UserException;
-import com.example.INFO.user.exception.UserExceptionType;
-import com.example.INFO.user.model.entity.LocalAuthDetailsEntity;
-import com.example.INFO.user.properties.JwtProperties;
-import com.example.INFO.user.repository.LocalAuthDetailsRepository;
-import com.example.INFO.user.repository.RefreshTokenRepository;
-import com.example.INFO.user.repository.UserRepository;
+import com.example.INFO.domain.user.dto.JwtTokenDto;
+import com.example.INFO.domain.user.exception.UserException;
+import com.example.INFO.domain.user.exception.UserExceptionType;
+import com.example.INFO.domain.user.model.entity.LocalAuthDetailsEntity;
+import com.example.INFO.domain.user.properties.JwtProperties;
+import com.example.INFO.domain.user.repository.LocalAuthDetailsRepository;
+import com.example.INFO.domain.user.repository.RefreshTokenRepository;
+import com.example.INFO.domain.user.repository.UserRepository;
+import com.example.INFO.domain.user.service.JwtTokenService;
+import com.example.INFO.domain.user.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
