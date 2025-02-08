@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -93,7 +95,7 @@ public class CommentService {
     }
     // 댓글 삭제
     @Transactional
-    public void deleteComment(Long userId, Long commentId) {
+    public Map<String, Long> deleteComment(Long userId, Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Comment not found"));
 
@@ -101,7 +103,15 @@ public class CommentService {
             throw new UnauthorizedException(ErrorCode.UNAUTHORIZED.getCode(), "User not authorized to delete this comment");
         }
 
+        Long boardId = comment.getBoard().getId(); // 댓글이 속한 게시글 ID 가져오기
         commentRepository.delete(comment);
+
+        // boardID와 commentID를 반환
+        Map<String, Long> result = new HashMap<>();
+        result.put("boardID", boardId);
+        result.put("commentID", commentId);
+
+        return result;
     }
     // Comment -> CommentResponse 매핑
     private CommentResponse mapToResponse(Comment comment) {
