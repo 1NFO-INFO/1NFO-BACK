@@ -74,14 +74,14 @@ public class BoardController {
     // 게시글 수정
     @Operation(summary = "게시글 수정", description = "게시글 내용을 수정합니다. (이미지 선택 가능)")
     @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<BoardResponse> updateBoard(
+    public ResponseEntity<String> updateBoard(
             @PathVariable Long id,
             @RequestPart("request") @Valid BoardUpdateRequest request,
             @RequestPart(value = "image", required = false) MultipartFile image) {
 
         Long userId = authUserService.getAuthenticatedUserId(); // 현재 로그인한 사용자 ID 가져오기
         BoardResponse response = boardService.updateBoard(id, userId, request, image);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok("BoardId: "+ response.getBoardId());
     }
     //카테고리별 정렬
     @Operation(summary = "카테고리별 게시글 조회", description = "카테고리명으로 게시글을 필터링하여 조회합니다.")
