@@ -57,6 +57,7 @@ public class BoardService {
     }
 
     // 게시글 삭제
+    @Transactional
     public void deleteBoard(Long id, Long userId) {
         Board board = findBoardById(id);
         validateUserAuthorization(board, userId);
