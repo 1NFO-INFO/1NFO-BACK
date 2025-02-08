@@ -33,7 +33,7 @@ public class BoardController {
     // 게시글 작성
     @Operation(summary = "게시글 작성", description = "이미지 업로드 포함하여 게시글을 작성합니다.")
     @ApiResponse(responseCode = "201", description = "게시글 생성 성공")
-    @PostMapping(value="/create",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> createBoard(
             @RequestParam(value = "image", required = false) MultipartFile image,
             @RequestPart("request") @Valid BoardCreateRequest request) {
@@ -51,10 +51,10 @@ public class BoardController {
     // 게시글 삭제
     @Operation(summary = "게시글 삭제", description = "게시글을 삭제합니다.")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Long> deleteBoard(@PathVariable Long id) {
+    public ResponseEntity<String> deleteBoard(@PathVariable Long id) {
         Long userId = authUserService.getAuthenticatedUserId();
         Long deletedBoardId = boardService.deleteBoard(id, userId);
-        return ResponseEntity.ok(deletedBoardId);
+        return ResponseEntity.ok("boardID: "+deletedBoardId);
     }
     // 단일 게시글 조회
     @Operation(summary = "단일 게시글 조회", description = "게시글 ID로 특정 게시글을 조회합니다.")
@@ -73,7 +73,7 @@ public class BoardController {
     }
     // 게시글 수정
     @Operation(summary = "게시글 수정", description = "게시글 내용을 수정합니다. (이미지 선택 가능)")
-    @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateBoard(
             @PathVariable Long id,
             @RequestPart("request") @Valid BoardUpdateRequest request,
@@ -81,7 +81,7 @@ public class BoardController {
 
         Long userId = authUserService.getAuthenticatedUserId(); // 현재 로그인한 사용자 ID 가져오기
         BoardResponse response = boardService.updateBoard(id, userId, request, image);
-        return ResponseEntity.ok("BoardId: "+ response.getBoardId());
+        return ResponseEntity.ok("BoardID: "+ response.getBoardId());
     }
     //카테고리별 정렬
     @Operation(summary = "카테고리별 게시글 조회", description = "카테고리명으로 게시글을 필터링하여 조회합니다.")
