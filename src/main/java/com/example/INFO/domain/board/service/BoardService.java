@@ -42,7 +42,7 @@ public class BoardService {
 
     // 게시글 생성
     @Transactional
-    public void createBoard(Long userId, BoardCreateRequest request, String imageUrl) {
+    public Long createBoard(Long userId, BoardCreateRequest request, String imageUrl) {
         UserEntity user = findUserById(userId);
 
         Board board = Board.builder()
@@ -53,7 +53,8 @@ public class BoardService {
                 .user(user)
                 .build();
 
-        boardRepository.save(board);
+        Board savedBoard = boardRepository.save(board);
+        return savedBoard.getId();
     }
 
     // 게시글 삭제
