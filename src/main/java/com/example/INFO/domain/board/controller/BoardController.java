@@ -51,10 +51,10 @@ public class BoardController {
     // 게시글 삭제
     @Operation(summary = "게시글 삭제", description = "게시글을 삭제합니다.")
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteBoard(@PathVariable Long id) {
-        Long userId = authUserService.getAuthenticatedUserId(); // 현재 로그인한 사용자 ID 가져오기
-        boardService.deleteBoard(id, userId);
-        return ResponseEntity.ok("Board deleted successfully");
+    public ResponseEntity<Long> deleteBoard(@PathVariable Long id) {
+        Long userId = authUserService.getAuthenticatedUserId();
+        Long deletedBoardId = boardService.deleteBoard(id, userId);
+        return ResponseEntity.ok(deletedBoardId);
     }
     // 단일 게시글 조회
     @Operation(summary = "단일 게시글 조회", description = "게시글 ID로 특정 게시글을 조회합니다.")

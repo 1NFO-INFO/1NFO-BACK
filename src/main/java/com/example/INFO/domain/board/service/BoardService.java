@@ -59,11 +59,13 @@ public class BoardService {
 
     // 게시글 삭제
     @Transactional
-    public void deleteBoard(Long id, Long userId) {
+    public Long deleteBoard(Long id, Long userId) {
         Board board = findBoardById(id);
         validateUserAuthorization(board, userId);
         boardRepository.delete(board);
+        return id;
     }
+
 
     // 단일 게시글 조회
     @Transactional(readOnly = true)
