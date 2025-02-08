@@ -12,6 +12,8 @@ import lombok.Getter;
 public class LikeResponse {
     @Schema(description = "게시글 ID")
     private Long boardId;
+    @Schema(description = "좋아요 ID")
+    private Long likeId;
     @Schema(description = "게시글 좋아요 개수")
     private int likeCount; // 좋아요 개수
 }
