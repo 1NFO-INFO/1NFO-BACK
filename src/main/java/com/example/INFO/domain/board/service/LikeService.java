@@ -34,7 +34,6 @@ public class LikeService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Board not found"));
 
-        // 중복 좋아요 방지
         if (likeRepository.existsByUserAndBoard(user, board)) {
             throw new DefaultException(ErrorCode.DUPLICATE_ERROR, "Already liked");
         }
@@ -48,7 +47,8 @@ public class LikeService {
 
         return LikeResponse.builder()
                 .boardId(boardId)
-                .likeCount(board.getLikeCount()) // 현재 좋아요 개수 반환
+                .likeId(like.getLikeId()) // Like ID 반환
+                .likeCount(board.getLikeCount())
                 .build();
     }
 
@@ -58,6 +58,8 @@ public class LikeService {
         Like like = likeRepository.findByUserIdAndBoardId(userId, boardId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Like not found"));
 
+        Long likeId = like.getLikeId(); // 삭제 전 Like ID 저장
+
         likeRepository.delete(like);
         likeRepository.flush();
 
@@ -66,9 +68,11 @@ public class LikeService {
 
         return LikeResponse.builder()
                 .boardId(boardId)
+                .likeId(likeId) // 삭제한 Like ID 반환
                 .likeCount(board.getLikeCount())
                 .build();
     }
+
     // 댓글 좋아요
     @Transactional
     public CommentLikeResponse likeComment(Long userId, Long commentId) {
@@ -77,7 +81,6 @@ public class LikeService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Comment not found"));
 
-        // 중복 좋아요 방지
         if (likeRepository.existsByUserAndComment(user, comment)) {
             throw new DefaultException(ErrorCode.DUPLICATE_ERROR, "Already liked");
         }
@@ -91,14 +94,18 @@ public class LikeService {
 
         return CommentLikeResponse.builder()
                 .commentId(commentId)
-                .likeCount(comment.getLikeCount()) // 현재 좋아요 개수 반환
+                .likeId(like.getLikeId()) // Like ID 반환
+                .likeCount(comment.getLikeCount())
                 .build();
     }
+
     // 댓글 좋아요 취소
     @Transactional
     public CommentLikeResponse unlikeComment(Long userId, Long commentId) {
         Like like = likeRepository.findByUserIdAndCommentId(userId, commentId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Like not found"));
+
+        Long likeId = like.getLikeId(); // 삭제 전 Like ID 저장
 
         likeRepository.delete(like);
         likeRepository.flush();
@@ -108,8 +115,10 @@ public class LikeService {
 
         return CommentLikeResponse.builder()
                 .commentId(commentId)
+                .likeId(likeId) // 삭제한 Like ID 반환
                 .likeCount(comment.getLikeCount())
                 .build();
     }
+
 
 }
