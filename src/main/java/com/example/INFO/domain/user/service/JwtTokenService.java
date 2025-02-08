@@ -25,8 +25,8 @@ public class JwtTokenService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String getUsername(String token) {
-        return extractClaims(token).get("username", String.class);
+    public long getUserId(String token) {
+        return extractClaims(token).get("user_id", Long.class);
     }
 
     public LocalDateTime getIssuedAt(String token) {
@@ -52,18 +52,18 @@ public class JwtTokenService {
                 .getPayload();
     }
 
-    public JwtTokenDto generateJwtToken(String username) {
+    public JwtTokenDto generateJwtToken(long userId) {
         Date now = new Date();
 
-        String accessToken = generateAccessToken(username, now);
-        String refreshTokenDto = generateRefreshToken(username, now);
+        String accessToken = generateAccessToken(userId, now);
+        String refreshTokenDto = generateRefreshToken(userId, now);
 
         return JwtTokenDto.of(accessToken, refreshTokenDto);
     }
 
-    private String generateAccessToken(String username, Date now) {
+    private String generateAccessToken(long userId, Date now) {
         Claims claims = Jwts.claims()
-                .add("username", username)
+                .add("user_id", userId)
                 .build();
 
         return Jwts.builder()
@@ -74,9 +74,9 @@ public class JwtTokenService {
                 .compact();
     }
 
-    private String generateRefreshToken(String username, Date now) {
+    private String generateRefreshToken(long userId, Date now) {
         Claims claims = Jwts.claims()
-                .add("username", username)
+                .add("user_id", userId)
                 .build();
 
         return Jwts.builder()

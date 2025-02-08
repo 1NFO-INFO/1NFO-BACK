@@ -1,11 +1,14 @@
 package com.example.INFO.user.service;
 
 import com.example.INFO.domain.user.dto.JwtTokenDto;
+import com.example.INFO.domain.user.dto.KakaoOAuthUserInfoDto;
 import com.example.INFO.domain.user.exception.UserException;
 import com.example.INFO.domain.user.exception.UserExceptionType;
+import com.example.INFO.domain.user.model.constant.OAuthProvider;
 import com.example.INFO.domain.user.model.entity.LocalAuthDetailsEntity;
 import com.example.INFO.domain.user.properties.JwtProperties;
 import com.example.INFO.domain.user.repository.LocalAuthDetailsRepository;
+import com.example.INFO.domain.user.repository.OAuthDetailsRepository;
 import com.example.INFO.domain.user.repository.RefreshTokenRepository;
 import com.example.INFO.domain.user.repository.UserRepository;
 import com.example.INFO.domain.user.service.JwtTokenService;
@@ -19,7 +22,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,6 +30,7 @@ class UserServiceTest {
 
     private final UserRepository userRepository = mock(UserRepository.class);
     private final LocalAuthDetailsRepository localAuthDetailsRepository = mock(LocalAuthDetailsRepository.class);
+    private final OAuthDetailsRepository oAuthDetailsRepository = mock(OAuthDetailsRepository.class);
     private final RefreshTokenRepository refreshTokenRepository = mock(RefreshTokenRepository.class);
     private final PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
     private final JwtTokenService jwtTokenService = mock(JwtTokenService.class);
@@ -35,10 +39,10 @@ class UserServiceTest {
     private final UserService userService = new UserService(
             userRepository,
             localAuthDetailsRepository,
+            oAuthDetailsRepository,
             refreshTokenRepository,
             passwordEncoder,
-            jwtTokenService,
-            jwtProperties
+            jwtTokenService
     );
 
     @Test
@@ -64,6 +68,30 @@ class UserServiceTest {
     }
 
     @Test
+    void 회원_생성_카카오_OAuth() {
+        String email = "email";
+        OAuthProvider provider  = OAuthProvider.KAKAO;
+        KakaoOAuthUserInfoDto userInfo = KakaoOAuthUserInfoDto.of(email);
+
+        when(oAuthDetailsRepository.existsByEmailAndProvider(email, provider)).thenReturn(false);
+
+        assertThatCode(() -> userService.createUser(userInfo))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    void 카카오_OAuth_회원_생성시_이미_존재하는_username이_있다면_예외가_발생한다() {
+        String email = "email";
+        OAuthProvider provider  = OAuthProvider.KAKAO;
+        KakaoOAuthUserInfoDto userInfo = KakaoOAuthUserInfoDto.of(email);
+
+        when(oAuthDetailsRepository.existsByEmailAndProvider(email, provider)).thenReturn(true);
+
+        UserException e = assertThrows(UserException.class, () -> userService.createUser(userInfo));
+        assertThat(e.getType()).isEqualTo(UserExceptionType.DUPLICATED_EMAIL);
+    }
+
+    @Test
     void 로그인() {
         String username = "username";
         String password = "password";
@@ -74,7 +102,7 @@ class UserServiceTest {
         when(passwordEncoder.matches(password, localAuthDetails.getPassword())).thenReturn(true);
         JwtTokenDto jwtToken = mock(JwtTokenDto.class);
         when(jwtToken.getRefreshToken()).thenReturn("refresh-token");
-        when(jwtTokenService.generateJwtToken(eq(username))).thenReturn(jwtToken);
+        when(jwtTokenService.generateJwtToken(anyLong())).thenReturn(jwtToken);
 
         assertThatCode(() -> userService.login(username, password))
                 .doesNotThrowAnyException();
@@ -110,20 +138,20 @@ class UserServiceTest {
 
     @Test
     void 리프레쉬() {
-        String username = "username";
+        long userId = 0;
         String refreshToken = "refresh-token";
 
-        setup_리프레쉬_test(username, refreshToken);
+        setup_리프레쉬_test(userId, refreshToken);
 
         assertDoesNotThrow(() -> userService.refresh(refreshToken));
     }
 
     @Test
     void 리프레쉬시_리프레쉬_토큰이_만료되었다면_예외가_발생한다() {
-        String username = "username";
+        long userId = 0;
         String refreshToken = "refresh-token";
 
-        setup_리프레쉬_test(username, refreshToken);
+        setup_리프레쉬_test(userId, refreshToken);
         when(jwtTokenService.isExpired(refreshToken)).thenReturn(true);
 
         UserException e = Assertions.assertThrows(UserException.class, () -> {
@@ -134,10 +162,10 @@ class UserServiceTest {
 
     @Test
     void 리프레쉬시_저장되어_있지_않은_리프레쉬_토큰이라면_예외가_발생한다() {
-        String username = "username";
+        long userId = 0;
         String refreshToken = "refresh-token";
 
-        setup_리프레쉬_test(username, refreshToken);
+        setup_리프레쉬_test(userId, refreshToken);
         when(refreshTokenRepository.existsByValue(refreshToken)).thenReturn(false);
 
         UserException e = Assertions.assertThrows(UserException.class, () -> {
@@ -146,10 +174,10 @@ class UserServiceTest {
         assertEquals(UserExceptionType.INVALID_REFRESH_TOKEN, e.getType());
     }
 
-    private void setup_리프레쉬_test(String username, String refreshToken) {
+    private void setup_리프레쉬_test(long userId, String refreshToken) {
         when(refreshTokenRepository.existsByValue(refreshToken)).thenReturn(true);
-        when(jwtTokenService.getUsername(refreshToken)).thenReturn(username);
+        when(jwtTokenService.getUserId(refreshToken)).thenReturn(userId);
         when(jwtTokenService.isExpired(refreshToken)).thenReturn(false);
-        when(jwtTokenService.generateJwtToken(username)).thenReturn(mock(JwtTokenDto.class));
+        when(jwtTokenService.generateJwtToken(userId)).thenReturn(mock(JwtTokenDto.class));
     }
 }

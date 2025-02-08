@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum UserExceptionType {
 
     DUPLICATED_USERNAME(HttpStatus.CONFLICT),
+    DUPLICATED_EMAIL(HttpStatus.CONFLICT),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED),
     INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED),

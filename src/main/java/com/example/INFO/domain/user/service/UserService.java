@@ -1,13 +1,16 @@
 package com.example.INFO.domain.user.service;
 
-import com.example.INFO.domain.user.model.entity.LocalAuthDetailsEntity;
-import com.example.INFO.domain.user.model.entity.RefreshTokenEntity;
-import com.example.INFO.domain.user.model.entity.UserEntity;
 import com.example.INFO.domain.user.dto.JwtTokenDto;
+import com.example.INFO.domain.user.dto.KakaoOAuthUserInfoDto;
 import com.example.INFO.domain.user.exception.UserException;
 import com.example.INFO.domain.user.exception.UserExceptionType;
-import com.example.INFO.domain.user.properties.JwtProperties;
+import com.example.INFO.domain.user.model.constant.OAuthProvider;
+import com.example.INFO.domain.user.model.entity.LocalAuthDetailsEntity;
+import com.example.INFO.domain.user.model.entity.OAuthDetailsEntity;
+import com.example.INFO.domain.user.model.entity.RefreshTokenEntity;
+import com.example.INFO.domain.user.model.entity.UserEntity;
 import com.example.INFO.domain.user.repository.LocalAuthDetailsRepository;
+import com.example.INFO.domain.user.repository.OAuthDetailsRepository;
 import com.example.INFO.domain.user.repository.RefreshTokenRepository;
 import com.example.INFO.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +29,10 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final LocalAuthDetailsRepository localAuthDetailsRepository;
+    private final OAuthDetailsRepository oAuthDetailsRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenService jwtTokenService;
-    private final JwtProperties jwtProperties;
 
     public void createUser(String username, String password) {
         if (localAuthDetailsRepository.existsByUsername(username)) {
@@ -46,6 +49,48 @@ public class UserService {
         log.info("localAuthDetails: {} is created", localAuthDetails);
     }
 
+    public void tryCreateUser(KakaoOAuthUserInfoDto kakaoOAuthUserInfoDto) {
+        try {
+            createUser(kakaoOAuthUserInfoDto);
+        } catch (UserException ignored) {
+        }
+    }
+
+    public void createUser(KakaoOAuthUserInfoDto kakaoOAuthUserInfoDto) {
+        String email = kakaoOAuthUserInfoDto.getEmail();
+
+        if (oAuthDetailsRepository.existsByEmailAndProvider(email, OAuthProvider.KAKAO)) {
+            throw new UserException(UserExceptionType.DUPLICATED_EMAIL);
+        }
+
+        UserEntity user = userRepository.save(UserEntity.of(email));
+
+        oAuthDetailsRepository.save(OAuthDetailsEntity.of(user, email, OAuthProvider.KAKAO));
+    }
+
+    public JwtTokenDto login(KakaoOAuthUserInfoDto kakaoOAuthUserInfoDto) {
+        String email = kakaoOAuthUserInfoDto.getEmail();
+
+        OAuthDetailsEntity kakaoOAuthDetails = oAuthDetailsRepository.findByEmailAndProvider(kakaoOAuthUserInfoDto.getEmail(), OAuthProvider.KAKAO)
+                .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
+
+        JwtTokenDto jwtTokenDto = jwtTokenService.generateJwtToken(kakaoOAuthDetails.getId());
+        String refreshToken = jwtTokenDto.getRefreshToken();
+        LocalDateTime refreshTokenIssuedAt = jwtTokenService.getIssuedAt(refreshToken);
+        LocalDateTime refreshTokenExpiration = jwtTokenService.getExpiration(refreshToken);
+
+        RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.of(
+                kakaoOAuthDetails.getUser(),
+                jwtTokenDto.getRefreshToken(),
+                refreshTokenIssuedAt,
+                refreshTokenExpiration
+        );
+
+        refreshTokenRepository.save(refreshTokenEntity);
+
+        return jwtTokenDto;
+    }
+
     public JwtTokenDto login(String username, String password) {
         log.debug("login try: username: {}, password: {}", username, password);
         LocalAuthDetailsEntity localAuthDetails = localAuthDetailsRepository.findByUsername(username)
@@ -56,7 +101,7 @@ public class UserService {
             throw new UserException(UserExceptionType.INVALID_PASSWORD);
         }
 
-        JwtTokenDto jwtTokenDto = jwtTokenService.generateJwtToken(username);
+        JwtTokenDto jwtTokenDto = jwtTokenService.generateJwtToken(localAuthDetails.getId());
         String refreshToken = jwtTokenDto.getRefreshToken();
         LocalDateTime refreshTokenIssuedAt = jwtTokenService.getIssuedAt(refreshToken);
         LocalDateTime refreshTokenExpiration = jwtTokenService.getExpiration(refreshToken);
@@ -79,7 +124,7 @@ public class UserService {
         }
 
         // refresh token이 유효하다면 새로운 JWT token을 발급
-        String username = jwtTokenService.getUsername(refreshToken);
-        return jwtTokenService.generateJwtToken(username);
+        long userId = jwtTokenService.getUserId(refreshToken);
+        return jwtTokenService.generateJwtToken(userId);
     }
 }

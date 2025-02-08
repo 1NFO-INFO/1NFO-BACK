@@ -1,5 +1,6 @@
 package com.example.INFO.domain.user.configuration.filter;
 
+import com.example.INFO.domain.user.service.CustomUserDetailsService;
 import com.example.INFO.domain.user.service.JwtTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,7 +23,7 @@ import java.io.IOException;
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenService jwtTokenService;
-    private final UserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -50,8 +51,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 return;
             }
 
-            String username = jwtTokenService.getUsername(token);
-            UserDetails user = userDetailsService.loadUserByUsername(username);
+            long userId = jwtTokenService.getUserId(token);
+            UserDetails user = userDetailsService.loadUserByUserId(userId);
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     user, null, user.getAuthorities()

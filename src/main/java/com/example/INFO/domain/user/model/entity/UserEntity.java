@@ -37,6 +37,9 @@ public class UserEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Favorite> favorites = new ArrayList<>();
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private OAuthDetailsEntity oAuthDetailsEntity;
+
     @Column(name = "registered_at", nullable = false)
     private LocalDateTime registeredAt;
 

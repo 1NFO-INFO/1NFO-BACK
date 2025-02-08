@@ -2,8 +2,8 @@ package com.example.INFO.domain.user.configuration;
 
 import com.example.INFO.domain.user.configuration.filter.JwtTokenFilter;
 import com.example.INFO.domain.user.exception.CustomAuthenticationEntryPoint;
+import com.example.INFO.domain.user.service.CustomUserDetailsService;
 import com.example.INFO.domain.user.service.JwtTokenService;
-import com.example.INFO.domain.user.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,13 +21,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtTokenService jwtTokenService;
-    private final UserDetailsServiceImpl userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(CsrfConfigurer::disable)
-                .authorizeHttpRequests(authorizeRequests ->authorizeRequests
-                        .requestMatchers(
+                .authorizeHttpRequests(authorizeRequests ->
+                        authorizeRequests
+                                .requestMatchers(
+                                        "/users", "/users/login", "/users/refresh",
+                                        "/oauth/kakao/authorize", "/oauth/kakao/callback",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
