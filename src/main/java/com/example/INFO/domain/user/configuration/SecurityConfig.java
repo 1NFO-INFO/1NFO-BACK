@@ -56,7 +56,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, PUBLIC_GET_URLS).permitAll()
                                 .requestMatchers("/api/v1/ticket/**").permitAll()
                                 .requestMatchers("/api/v1/favorites/**").authenticated()
-                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 ).sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
