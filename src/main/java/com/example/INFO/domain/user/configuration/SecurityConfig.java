@@ -20,6 +20,29 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private static final String[] SWAGGER_URLS = {
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/v3/api-docs/**",
+            "/swagger-resources/**",
+            "/webjars/**"
+    };
+
+    private static final String[] PUBLIC_GET_URLS = {
+            "/oauth/kakao/authorize",
+            "/oauth/kakao/callback",
+            "/api/v1/boards/search/**",
+            "/api/v1/boards/category",
+            "/api/v1/comments/search/board/**",
+            "/api/v1/comments/**"
+    };
+
+    private static final String[] PUBLIC_POST_URLS = {
+            "/users",
+            "/users/login",
+            "/users/refresh"
+    };
+
     private final JwtTokenService jwtTokenService;
     private final CustomUserDetailsService userDetailsService;
 
@@ -28,23 +51,12 @@ public class SecurityConfig {
         http.csrf(CsrfConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers(
-                                        "/users", "/users/login", "/users/refresh",
-                                        "/oauth/kakao/authorize", "/oauth/kakao/callback",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/v3/api-docs/**",
-                                "/swagger-resources/**",
-                                "/webjars/**"
-                        ).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/boards/search/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/boards/category").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/comments/search/board/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/comments/**").permitAll()
-                        .requestMatchers("/users", "/users/login", "/users/refresh").permitAll()
-                        .requestMatchers("/api/v1/ticket/**").permitAll()
-                        .requestMatchers("/api/v1/favorites/**").authenticated()
-                        .anyRequest().authenticated()
+                                .requestMatchers(SWAGGER_URLS).permitAll()
+                                .requestMatchers(HttpMethod.POST, PUBLIC_POST_URLS).permitAll()
+                                .requestMatchers(HttpMethod.GET, PUBLIC_GET_URLS).permitAll()
+                                .requestMatchers("/api/v1/ticket/**").permitAll()
+                                .requestMatchers("/api/v1/favorites/**").authenticated()
+                                .anyRequest().authenticated()
                 ).sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
