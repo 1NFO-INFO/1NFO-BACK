@@ -18,6 +18,7 @@ public class CheongyakDetailsFetchService {
     private final AptCheongyakApiService cheongyakAptApiService;
     private final UrbtyOfctlCheongyakApiService urbtyOfctlCheongyakApiService;
     private final RemndrCheongyakApiService remndrCheongyakApiService;
+    private final PblPvtRentCheongyakApiService pblPvtRentCheongyakApiService;
     private final CheongyakDetailsRepository cheongyakDetailsRepository;
 
     public void fetchAptData() {
@@ -38,6 +39,14 @@ public class CheongyakDetailsFetchService {
 
     public void fetchRemndrData() {
         List<CheongyakDetailsDto> cheongyakDetails = remndrCheongyakApiService.getAllData();
+
+        cheongyakDetails.stream()
+                .map(CheongyakDetailsDto::toEntity)
+                .forEach(cheongyakDetailsRepository::save);
+    }
+
+    public void fetchPblPvtRentData() {
+        List<CheongyakDetailsDto> cheongyakDetails = pblPvtRentCheongyakApiService.getAllData();
 
         cheongyakDetails.stream()
                 .map(CheongyakDetailsDto::toEntity)
