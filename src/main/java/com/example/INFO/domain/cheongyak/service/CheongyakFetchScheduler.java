@@ -18,6 +18,7 @@ public class CheongyakFetchScheduler {
         fetchUrbtyOfctlCheongyak();
         fetchRemndrCheongyak();
         fetchPblPvtRentCheongyak();
+        fetchOptCheongyak();
     }
 
     private void fetchAptCheongyak() {
@@ -57,6 +58,16 @@ public class CheongyakFetchScheduler {
             log.info("공공지원 민간임대 청약 상세정보 fetch 작업 성공");
         } catch (Exception e) {
             log.error("공공지원 민간임대 청약 상세정보 fetch 작업 실패", e);
+        }
+    }
+
+    private void fetchOptCheongyak() {
+        try {
+            log.info("임의공급 청약 상세정보 fetch 작업 시작");
+            cheongyakDetailsFetchService.fetchOptData();
+            log.info("임의공급 청약 상세정보 fetch 작업 성공");
+        } catch (Exception e) {
+            log.error("임의공급 청약 상세정보 fetch 작업 실패", e);
         }
     }
 }
