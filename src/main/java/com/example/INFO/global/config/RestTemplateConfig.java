@@ -1,4 +1,4 @@
-package com.example.INFO.domain.user.configuration;
+package com.example.INFO.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
