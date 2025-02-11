@@ -16,10 +16,19 @@ import java.util.List;
 public class CheongyakDetailsFetchService {
 
     private final AptCheongyakApiService cheongyakAptApiService;
+    private final UrbtyOfctlCheongyakApiService urbtyOfctlCheongyakApiService;
     private final CheongyakDetailsRepository cheongyakDetailsRepository;
 
     public void fetchAptData() {
         List<CheongyakDetailsDto> cheongyakDetails = cheongyakAptApiService.getAllData();
+
+        cheongyakDetails.stream()
+                .map(CheongyakDetailsDto::toEntity)
+                .forEach(cheongyakDetailsRepository::save);
+    }
+
+    public void fetchUrbtyOfctlData() {
+        List<CheongyakDetailsDto> cheongyakDetails = urbtyOfctlCheongyakApiService.getAllData();
 
         cheongyakDetails.stream()
                 .map(CheongyakDetailsDto::toEntity)

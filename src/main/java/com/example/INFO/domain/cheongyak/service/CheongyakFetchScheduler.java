@@ -15,6 +15,7 @@ public class CheongyakFetchScheduler {
     @Scheduled(cron = "0 0 3 * * *")    // 매일 새벽 3시 0분 0초
     public void fetchCheongyak() {
         fetchAptCheongyak();
+        fetchUrbtyOfctlCheongyak();
     }
 
     private void fetchAptCheongyak() {
@@ -23,7 +24,17 @@ public class CheongyakFetchScheduler {
             cheongyakDetailsFetchService.fetchAptData();
             log.info("아파트 청약 상세정보 fetch 작업 성공 - APT");
         } catch (Exception e) {
-            log.error("아파트 청약 상세젱보 fetch 작업 실패 - APT", e);
+            log.error("아파트 청약 상세정보 fetch 작업 실패 - APT", e);
+        }
+    }
+
+    private void fetchUrbtyOfctlCheongyak() {
+        try {
+            log.info("오피스텔/도시형/민간임대/생활숙박시설 청약 상세정보 fetch 작업 시작");
+            cheongyakDetailsFetchService.fetchUrbtyOfctlData();
+            log.info("오피스텔/도시형/민간임대/생활숙박시설 청약 상세정보 fetch 작업 성공 - APT");
+        } catch (Exception e) {
+            log.error("오피스텔/도시형/민간임대/생활숙박시설 청약 상세정보 fetch 작업 실패 - APT", e);
         }
     }
 }
