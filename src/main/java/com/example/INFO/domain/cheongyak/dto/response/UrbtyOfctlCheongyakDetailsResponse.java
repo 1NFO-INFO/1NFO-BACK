@@ -15,7 +15,7 @@ public class UrbtyOfctlCheongyakDetailsResponse {
     @JsonProperty("HOUSE_NM")
     String houseName;
 
-    @JsonProperty("HOUSE_SECD_NM")
+    @JsonProperty("HOUSE_DTL_SECD_NM")
     String housingType;
 
     @JsonProperty("RCRIT_PBLANC_DE")
