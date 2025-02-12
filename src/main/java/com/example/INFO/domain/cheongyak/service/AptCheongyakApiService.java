@@ -5,7 +5,6 @@ import com.example.INFO.domain.cheongyak.dto.response.AptCheongyakDetailsRespons
 import com.example.INFO.domain.cheongyak.dto.response.CheongyakApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;

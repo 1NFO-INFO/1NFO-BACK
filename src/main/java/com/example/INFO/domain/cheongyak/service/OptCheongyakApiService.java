@@ -3,7 +3,6 @@ package com.example.INFO.domain.cheongyak.service;
 import com.example.INFO.domain.cheongyak.dto.CheongyakDetailsDto;
 import com.example.INFO.domain.cheongyak.dto.response.CheongyakApiResponse;
 import com.example.INFO.domain.cheongyak.dto.response.OptCheongyakDetailsResponse;
-import com.example.INFO.domain.cheongyak.dto.response.PblPvtRentCheongyakDetailsResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;

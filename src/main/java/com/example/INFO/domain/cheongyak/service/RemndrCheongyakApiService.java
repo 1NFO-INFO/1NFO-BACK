@@ -1,7 +1,6 @@
 package com.example.INFO.domain.cheongyak.service;
 
 import com.example.INFO.domain.cheongyak.dto.CheongyakDetailsDto;
-import com.example.INFO.domain.cheongyak.dto.response.AptCheongyakDetailsResponse;
 import com.example.INFO.domain.cheongyak.dto.response.CheongyakApiResponse;
 import com.example.INFO.domain.cheongyak.dto.response.RemndrCheongyakDetailsResponse;
 import lombok.RequiredArgsConstructor;
