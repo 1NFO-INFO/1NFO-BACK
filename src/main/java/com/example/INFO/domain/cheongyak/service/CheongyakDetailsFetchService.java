@@ -25,38 +25,34 @@ public class CheongyakDetailsFetchService {
     public void fetchAptData() {
         List<CheongyakDetailsDto> cheongyakDetails = cheongyakAptApiService.getAllData();
 
-        cheongyakDetails.stream()
-                .map(CheongyakDetailsDto::toEntity)
-                .forEach(cheongyakDetailsRepository::save);
+        fetchData(cheongyakDetails);
     }
 
     public void fetchUrbtyOfctlData() {
         List<CheongyakDetailsDto> cheongyakDetails = urbtyOfctlCheongyakApiService.getAllData();
 
-        cheongyakDetails.stream()
-                .map(CheongyakDetailsDto::toEntity)
-                .forEach(cheongyakDetailsRepository::save);
+        fetchData(cheongyakDetails);
     }
 
     public void fetchRemndrData() {
         List<CheongyakDetailsDto> cheongyakDetails = remndrCheongyakApiService.getAllData();
 
-        cheongyakDetails.stream()
-                .map(CheongyakDetailsDto::toEntity)
-                .forEach(cheongyakDetailsRepository::save);
+        fetchData(cheongyakDetails);
     }
 
     public void fetchPblPvtRentData() {
         List<CheongyakDetailsDto> cheongyakDetails = pblPvtRentCheongyakApiService.getAllData();
 
-        cheongyakDetails.stream()
-                .map(CheongyakDetailsDto::toEntity)
-                .forEach(cheongyakDetailsRepository::save);
+        fetchData(cheongyakDetails);
     }
 
     public void fetchOptData() {
         List<CheongyakDetailsDto> cheongyakDetails = optCheongyakApiService.getAllData();
 
+        fetchData(cheongyakDetails);
+    }
+
+    private void fetchData(List<CheongyakDetailsDto> cheongyakDetails) {
         cheongyakDetails.stream()
                 .map(CheongyakDetailsDto::toEntity)
                 .forEach(cheongyakDetailsRepository::save);

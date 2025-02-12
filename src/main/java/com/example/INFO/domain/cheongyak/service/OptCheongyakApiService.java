@@ -11,71 +11,29 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
-@Log4j2
-@RequiredArgsConstructor
-public class OptCheongyakApiService {
-
-    private final RestTemplate restTemplate;
+public class OptCheongyakApiService extends AbstractCheongyakApiService<OptCheongyakDetailsResponse> {
 
     @Value("${api.cheongyak.url.opt}")
-    private String urbtyOfCtlUrl;
-    @Value("${api.cheongyak.key}")
-    private String apiKey;
-    @Value("${api.cheongyak.per-page}")
-    private int perPage;
+    private String optUrl;
 
-    public List<CheongyakDetailsDto> getAllData() {
-        final int totalCount = getAptResponse(1, 1).getTotalCount();
-
-        List<CheongyakDetailsDto> cheongyakData = new ArrayList<>();
-        for (int page = 1; page <= (totalCount / perPage) + 1; page++) {
-            cheongyakData.addAll(getAptData(page, perPage));
-        }
-
-        return cheongyakData;
+    public OptCheongyakApiService(RestTemplate restTemplate) {
+        super(restTemplate);
     }
 
-    private List<CheongyakDetailsDto> getAptData(int page, int perPage) {
-        List<CheongyakDetailsDto> cheongyakDetails = new ArrayList<>();
-
-        CheongyakApiResponse<OptCheongyakDetailsResponse> apiResponse = getAptResponse(page, perPage);
-
-        apiResponse.getData().stream()
-                .map(OptCheongyakDetailsResponse::toDto)
-                .forEach(cheongyakDetails::add);
-
-        return cheongyakDetails;
+    @Override
+    protected String getBaseUrl() {
+        return optUrl;
     }
 
-    private CheongyakApiResponse<OptCheongyakDetailsResponse> getAptResponse(int page, int perPage) {
-        String url = buildAptUrl(page, perPage);
-        log.info("API 호출: {}", url);
-
-        try {
-            return restTemplate.exchange(
-                    url,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<CheongyakApiResponse<OptCheongyakDetailsResponse>>() {}
-            ).getBody();
-        } catch (RestClientException e) {
-            log.error("API 호출 중 오류 발생: {}", url, e);
-            throw new RuntimeException("API 호출 중 오류 발생", e);
-        }
+    @Override
+    protected CheongyakDetailsDto convertToDto(OptCheongyakDetailsResponse response) {
+        return response.toDto();
     }
 
-    private String buildAptUrl(int page, int perPage) {
-        return UriComponentsBuilder.fromUriString(urbtyOfCtlUrl)
-                .queryParam("serviceKey", apiKey)
-                .queryParam("page", page)
-                .queryParam("perPage", perPage)
-                .build(false)
-                .toUriString();
+    @Override
+    protected ParameterizedTypeReference<CheongyakApiResponse<OptCheongyakDetailsResponse>> getResponseType() {
+        return new ParameterizedTypeReference<>() {};
     }
 }
