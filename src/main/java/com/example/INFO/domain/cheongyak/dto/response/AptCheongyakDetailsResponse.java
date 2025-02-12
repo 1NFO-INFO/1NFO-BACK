@@ -10,7 +10,7 @@ import java.time.LocalDate;
 public class AptCheongyakDetailsResponse {
 
     @JsonProperty("PBLANC_NO")
-    String id;
+    Long id;
 
     @JsonProperty("HOUSE_NM")
     String houseName;

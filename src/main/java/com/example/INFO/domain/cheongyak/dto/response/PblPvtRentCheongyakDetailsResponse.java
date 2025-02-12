@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 public class PblPvtRentCheongyakDetailsResponse {
 
     @JsonProperty("PBLANC_NO")
-    String id;
+    Long id;
 
     @JsonProperty("HOUSE_NM")
     String houseName;

@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Builder
 public class CheongyakDetailsDto {
 
-    String id;
+    Long id;
     String houseName;
     String supplyLocation;
     String housingType;
