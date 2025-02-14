@@ -30,7 +30,7 @@ class CheongyakControllerTest {
 
     @Test
     public void 청약목록_조회_성공() throws Exception {
-        given(cheongyakService.list(any())).willReturn(Page.empty());
+        given(cheongyakService.list(any(), any())).willReturn(Page.empty());
 
         mockMvc.perform(
                 get("/api/v1/cheongyak")
