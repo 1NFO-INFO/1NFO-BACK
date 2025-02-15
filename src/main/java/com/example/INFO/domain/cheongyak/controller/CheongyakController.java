@@ -1,6 +1,7 @@
 package com.example.INFO.domain.cheongyak.controller;
 
 import com.example.INFO.domain.cheongyak.dto.response.CheongyakDetailsResponse;
+import com.example.INFO.domain.cheongyak.model.constant.CheongyakStatus;
 import com.example.INFO.domain.cheongyak.service.CheongyakService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,9 +25,10 @@ public class CheongyakController {
     @GetMapping
     public ResponseEntity<Page<CheongyakDetailsResponse>> list(
             Pageable pageable,
-            @RequestParam(required = false, name = "housing_type") List<String> housingTypes
+            @RequestParam(required = false, name = "housing_type") List<String> housingTypes,
+            @RequestParam(required = false, name = "status") CheongyakStatus status
             ) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(cheongyakService.list(pageable, housingTypes).map(CheongyakDetailsResponse::fromDto));
+                .body(cheongyakService.list(pageable, housingTypes, status).map(CheongyakDetailsResponse::fromDto));
     }
 }
