@@ -4,6 +4,7 @@ import com.example.INFO.domain.cheongyak.dto.CheongyakDetailsDto;
 import com.example.INFO.domain.cheongyak.model.constant.CheongyakStatus;
 import com.example.INFO.domain.cheongyak.model.entity.CheongyakDetailsEntity;
 import com.example.INFO.domain.cheongyak.repository.CheongyakDetailsRepository;
+import com.example.INFO.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +30,12 @@ public class CheongyakService {
                         .and(status != null ? statusFilter(status) : null);
 
         return cheongyakDetailsRepository.findAll(spec, pageable).map(CheongyakDetailsDto::fromEntity);
+    }
+
+    public CheongyakDetailsDto details(Long id) {
+        return cheongyakDetailsRepository.findById(id)
+                .map(CheongyakDetailsDto::fromEntity)
+                .orElseThrow(() -> new NotFoundException("청약 상세 정보를 찾을 수 없습니다."));
     }
 
     private Pageable addDefaultSorting(Pageable pageable) {
