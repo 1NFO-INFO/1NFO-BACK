@@ -65,8 +65,26 @@ public class CheongyakController {
                 .body(CheongyakDetailsListResponse.fromPage(cheongyakDetailsResponsePage));
     }
 
+    @Operation(
+            summary = "청약 상세 조회",
+            description = "청약 상세를 조회합니다.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "청약 상세 조회 성공",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = CheongyakDetailsResponse.class)
+                            )
+                    )
+            }
+    )
     @GetMapping("/{id}")
-    public ResponseEntity<CheongyakDetailsResponse> details(@PathVariable("id") Long id) {
+    public ResponseEntity<CheongyakDetailsResponse> details(
+            @PathVariable("id")
+            @Parameter(description = "청약 ID")
+            Long id
+    ) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CheongyakDetailsResponse.fromDto(cheongyakService.details(id)));
     }
