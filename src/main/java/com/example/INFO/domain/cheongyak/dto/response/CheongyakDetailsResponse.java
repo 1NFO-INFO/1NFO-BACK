@@ -1,7 +1,8 @@
 package com.example.INFO.domain.cheongyak.dto.response;
 
 import com.example.INFO.domain.cheongyak.dto.CheongyakDetailsDto;
-import jakarta.persistence.Column;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
@@ -12,34 +13,44 @@ import java.time.LocalDate;
 @Builder(access = AccessLevel.PRIVATE)
 public class CheongyakDetailsResponse {
 
-    @Column(name = "id")
+    @JsonProperty("id")
+    @Schema(description = "청약 공고 ID")
     Long id;
 
-    @Column(name = "house_name")
+    @JsonProperty("house_name")
+    @Schema(description = "아파트 이름")
     String houseName;
 
-    @Column(name = "supply_location")
+    @JsonProperty("supply_location")
+    @Schema(description = "공급 위치")
     String supplyLocation;
 
-    @Column(name = "housing_type")
+    @JsonProperty("housing_type")
+    @Schema(description = "주거 형태")
     String housingType;
 
-    @Column(name = "recruitment_notice_date")
+    @JsonProperty("recruitment_notice_date")
+    @Schema(description = "공고일")
     LocalDate recruitmentNoticeDate;
 
-    @Column(name = "supply_units")
+    @JsonProperty("supply_units")
+    @Schema(description = "공급 세대 수")
     Integer supplyUnits;
 
-    @Column(name = "application_start_date")
+    @JsonProperty("application_start_date")
+    @Schema(description = "청약 접수 시작일")
     LocalDate applicationStartDate;
 
-    @Column(name = "application_end_date")
+    @JsonProperty("application_end_date")
+    @Schema(description = "청약 접수 마감일")
     LocalDate applicationEndDate;
 
-    @Column(name = "winner_announcement_date")
+    @JsonProperty("winner_announcement_date")
+    @Schema(description = "당첨자 발표일")
     LocalDate winnerAnnouncementDate;
 
-    @Column(name = "homepage_url")
+    @JsonProperty("homepage_url")
+    @Schema(description = "홈페이지 URL")
     String homepageUrl;
 
     public static CheongyakDetailsResponse fromDto(CheongyakDetailsDto cheongyakDetailsDto) {
