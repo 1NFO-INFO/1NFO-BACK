@@ -4,23 +4,12 @@ import com.example.INFO.global.payload.ErrorCode;
 import lombok.Getter;
 import org.springframework.security.core.AuthenticationException;
 
-@Getter
-public class DefaultAuthenticationException extends AuthenticationException {
-
-    private ErrorCode errorCode;
-
-    public DefaultAuthenticationException(String msg, Throwable t) {
-        super(msg, t);
-        this.errorCode = ErrorCode.INVALID_REPRESENTATION;
-    }
-
-    public DefaultAuthenticationException(String msg) {
-        super(msg);
-    }
-
+public class DefaultAuthenticationException extends CustomException {
     public DefaultAuthenticationException(ErrorCode errorCode) {
-        super(errorCode.getMessage());
-        this.errorCode = errorCode;
+        super(errorCode);
     }
 
+    public DefaultAuthenticationException(ErrorCode errorCode, String detail) {
+        super(errorCode, detail);
+    }
 }
