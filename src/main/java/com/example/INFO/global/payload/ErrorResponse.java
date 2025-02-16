@@ -1,40 +1,30 @@
 package com.example.INFO.global.payload;
 
-import lombok.AccessLevel;
-import lombok.Builder;
+import org.springframework.http.HttpStatus;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ErrorResponse {
+@AllArgsConstructor
+public class ErrorResponse<T> {
+    private final int statusCode;
+    private final String errorCode;
+    private final String message;
+    private final T data;
 
-
-    private String message;
-    private int status;
-    private String code;
-
-
-    @Builder
-    private ErrorResponse(final ErrorCode code) {
-        this.status = code.getStatus();
-        this.message = code.getMessage();
-        this.code = code.getCode();
+    public static <T> ErrorResponse<T> res(final HttpStatus status, final ErrorCode errorCode) {
+        return new ErrorResponse<>(status.value(), errorCode.getCode(), errorCode.getMessage(), null);
     }
 
-    private ErrorResponse(final ErrorCode code, final String message) {
-        this.status = code.getStatus();
-        this.message = message;
-        this.code = code.getCode();
-
+    public static <T> ErrorResponse<T> res(final HttpStatus status, final ErrorCode errorCode, final String customMessage) {
+        return new ErrorResponse<>(status.value(), errorCode.getCode(), customMessage, null);
     }
 
-    public static ErrorResponse of(final ErrorCode code) {
-        return new ErrorResponse(code);
+    public static <T> ErrorResponse<T> res(final HttpStatus status, final ErrorCode errorCode, final T data) {
+        return new ErrorResponse<>(status.value(), errorCode.getCode(), errorCode.getMessage(), data);
     }
 
-    public static ErrorResponse of(final ErrorCode code, final String message) {
-        return new ErrorResponse(code, message);
-
+    public static <T> ErrorResponse<T> res(final HttpStatus status, final ErrorCode errorCode, final String customMessage, final T data) {
+        return new ErrorResponse<>(status.value(), errorCode.getCode(), customMessage, data);
     }
 }
