@@ -31,15 +31,12 @@ public class CommentService {
     // 댓글 생성
     @Transactional
     public CommentResponse createComment(Long userId, CommentCreateRequest request) {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "User not found"));
-        Board board = boardRepository.findById(request.getBoardId())
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Board not found"));
+        UserEntity user = validateUserExists(userId);
+        Board board = validateBoardExists(request.getBoardId());
 
         Comment parent = null;
         if (request.getParentId() != null) {
-            parent = commentRepository.findById(request.getParentId())
-                    .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(),"Parent comment not found"));
+            parent = validateCommentExists(request.getParentId());
         }
 
         Comment comment = Comment.builder()
@@ -56,11 +53,8 @@ public class CommentService {
     // 대댓글 생성
     @Transactional
     public CommentResponse createReply(Long userId, Long parentId, String content) {
-        Comment parent = commentRepository.findById(parentId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Parent comment not found"));
-
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "User not found"));
+        Comment parent = validateCommentExists(parentId);
+        UserEntity user = validateUserExists(userId);
 
         Comment reply = Comment.builder()
                 .board(parent.getBoard())
@@ -72,47 +66,70 @@ public class CommentService {
         Comment savedReply = commentRepository.save(reply);
         return mapToResponse(savedReply);
     }
+
     // 게시글의 모든 댓글 조회
-    @Transactional(readOnly = true) // 트랜잭션 유지
+    @Transactional(readOnly = true)
     public List<CommentResponse> getCommentsWithReplies(Long boardId) {
         List<Comment> parentComments = commentRepository.findByBoardIdAndParentIsNull(boardId);
         return parentComments.stream()
                 .map(this::mapToResponseWithReplies)
                 .collect(Collectors.toList());
     }
+
     // 댓글 수정
     @Transactional
     public CommentResponse updateComment(Long userId, Long commentId, String content) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Comment not found"));
-
-        if (!comment.getUser().getId().equals(userId)) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED.getCode(), "User not authorized to update this comment");
-        }
+        Comment comment = validateCommentExists(commentId);
+        validateUserAuthorization(comment.getUser().getId(), userId, "User not authorized to update this comment");
 
         comment.updateContent(content);
         return mapToResponse(comment);
     }
+
     // 댓글 삭제
     @Transactional
     public Map<String, Long> deleteComment(Long userId, Long commentId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Comment not found"));
+        Comment comment = validateCommentExists(commentId);
+        validateUserAuthorization(comment.getUser().getId(), userId, "User not authorized to delete this comment");
 
-        if (!comment.getUser().getId().equals(userId)) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED.getCode(), "User not authorized to delete this comment");
-        }
-
-        Long boardId = comment.getBoard().getId(); // 댓글이 속한 게시글 ID 가져오기
+        Long boardId = comment.getBoard().getId();
         commentRepository.delete(comment);
 
-        // boardID와 commentID를 반환
         Map<String, Long> result = new HashMap<>();
         result.put("boardID", boardId);
         result.put("commentID", commentId);
 
         return result;
     }
+
+    //--------------------------------------------예외처리 코드-----------------------------------------------
+
+    // 사용자 존재 여부 확인
+    private UserEntity validateUserExists(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND, "User not found"));
+    }
+
+    // 게시글 존재 여부 확인
+    private Board validateBoardExists(Long boardId) {
+        return boardRepository.findById(boardId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND, "Board not found"));
+    }
+
+    // 댓글 존재 여부 확인
+    private Comment validateCommentExists(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND, "Comment not found"));
+    }
+
+    // 사용자 권한 검증
+    private void validateUserAuthorization(Long ownerId, Long userId, String errorMessage) {
+        if (!ownerId.equals(userId)) {
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED, errorMessage);
+        }
+    }
+
+
     // Comment -> CommentResponse 매핑
     private CommentResponse mapToResponse(Comment comment) {
         return CommentResponse.builder()
