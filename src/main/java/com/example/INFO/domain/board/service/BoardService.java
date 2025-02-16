@@ -165,25 +165,24 @@ public class BoardService {
 
 
     //  사용자 조회 메서드
+// 사용자 조회 메서드
     private UserEntity findUserById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "User not found"));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND, "User not found"));
     }
 
-    //  게시글 조회 메서드
+    // 게시글 조회 메서드
     private Board findBoardById(Long id) {
         return boardRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Board not found"));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND, "Board not found"));
     }
 
-    //  작성자 검증 메서드
+    // 작성자 검증 메서드
     private void validateUserAuthorization(Board board, Long userId) {
         if (!board.getUser().getId().equals(userId)) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED.getCode(), "User not authorized to modify this board");
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED, "User not authorized to modify this board");
         }
     }
-
-
 
     // ==========================  DTO 변환 메서드  ==========================
 
