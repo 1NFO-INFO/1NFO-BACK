@@ -1,4 +1,4 @@
-package com.example.INFO.user.service;
+package com.example.INFO.domain.user.service;
 
 import com.example.INFO.domain.user.exception.UserException;
 import com.example.INFO.domain.user.exception.UserExceptionType;

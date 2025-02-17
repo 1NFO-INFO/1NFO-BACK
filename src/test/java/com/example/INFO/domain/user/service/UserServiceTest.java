@@ -1,4 +1,4 @@
-package com.example.INFO.user.service;
+package com.example.INFO.domain.user.service;
 
 import com.example.INFO.domain.auth.dto.JwtTokenDto;
 import com.example.INFO.domain.auth.dto.KakaoOAuthUserInfoDto;

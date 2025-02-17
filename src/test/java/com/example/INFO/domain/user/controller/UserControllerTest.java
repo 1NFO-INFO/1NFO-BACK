@@ -1,4 +1,4 @@
-package com.example.INFO.user.controller;
+package com.example.INFO.domain.user.controller;
 
 import com.example.INFO.domain.auth.dto.JwtTokenDto;
 import com.example.INFO.domain.auth.dto.request.UserLoginRequest;
