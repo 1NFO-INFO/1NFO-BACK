@@ -1,6 +1,6 @@
-package com.example.INFO.domain.user.configuration;
+package com.example.INFO.domain.auth.config;
 
-import com.example.INFO.domain.user.configuration.filter.JwtTokenFilter;
+import com.example.INFO.domain.auth.config.filter.JwtTokenFilter;
 import com.example.INFO.domain.user.exception.CustomAuthenticationEntryPoint;
 import com.example.INFO.domain.user.service.CustomUserDetailsService;
 import com.example.INFO.domain.user.service.JwtTokenService;
