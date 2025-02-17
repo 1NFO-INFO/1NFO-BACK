@@ -1,6 +1,6 @@
 package com.example.INFO.domain.user.service;
 
-import com.example.INFO.domain.user.repository.RefreshTokenRepository;
+import com.example.INFO.domain.auth.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Scheduled;

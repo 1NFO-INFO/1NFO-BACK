@@ -1,5 +1,7 @@
 package com.example.INFO.domain.user.model.entity;
 
+import com.example.INFO.domain.auth.model.entity.LocalAuthDetailsEntity;
+import com.example.INFO.domain.auth.model.entity.OAuthDetailsEntity;
 import com.example.INFO.domain.favorite.domain.Favorite;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

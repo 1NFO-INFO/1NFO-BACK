@@ -1,6 +1,6 @@
 package com.example.INFO.domain.user.dto;
 
-import com.example.INFO.domain.user.model.entity.LocalAuthDetailsEntity;
+import com.example.INFO.domain.auth.model.entity.LocalAuthDetailsEntity;
 import com.example.INFO.domain.user.model.entity.UserEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

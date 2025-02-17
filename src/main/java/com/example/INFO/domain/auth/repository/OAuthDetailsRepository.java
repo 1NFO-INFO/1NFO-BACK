@@ -1,7 +1,7 @@
-package com.example.INFO.domain.user.repository;
+package com.example.INFO.domain.auth.repository;
 
-import com.example.INFO.domain.user.model.entity.OAuthDetailsEntity;
-import com.example.INFO.domain.user.model.constant.OAuthProvider;
+import com.example.INFO.domain.auth.model.entity.OAuthDetailsEntity;
+import com.example.INFO.domain.auth.model.constant.OAuthProvider;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

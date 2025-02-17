@@ -1,6 +1,6 @@
-package com.example.INFO.domain.user.repository;
+package com.example.INFO.domain.auth.repository;
 
-import com.example.INFO.domain.user.model.entity.RefreshTokenEntity;
+import com.example.INFO.domain.auth.model.entity.RefreshTokenEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;

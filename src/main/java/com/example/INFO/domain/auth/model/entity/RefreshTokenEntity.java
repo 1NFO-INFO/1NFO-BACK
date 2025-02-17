@@ -1,5 +1,6 @@
-package com.example.INFO.domain.user.model.entity;
+package com.example.INFO.domain.auth.model.entity;
 
+import com.example.INFO.domain.user.model.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
