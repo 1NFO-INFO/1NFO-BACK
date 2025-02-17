@@ -1,4 +1,4 @@
-package com.example.INFO.domain.user.properties;
+package com.example.INFO.domain.auth.properties;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

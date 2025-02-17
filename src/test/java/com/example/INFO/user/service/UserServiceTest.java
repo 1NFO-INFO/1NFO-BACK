@@ -6,7 +6,7 @@ import com.example.INFO.domain.user.exception.UserException;
 import com.example.INFO.domain.user.exception.UserExceptionType;
 import com.example.INFO.domain.auth.model.constant.OAuthProvider;
 import com.example.INFO.domain.auth.model.entity.LocalAuthDetailsEntity;
-import com.example.INFO.domain.user.properties.JwtProperties;
+import com.example.INFO.domain.auth.properties.JwtProperties;
 import com.example.INFO.domain.auth.repository.LocalAuthDetailsRepository;
 import com.example.INFO.domain.auth.repository.OAuthDetailsRepository;
 import com.example.INFO.domain.auth.repository.RefreshTokenRepository;
