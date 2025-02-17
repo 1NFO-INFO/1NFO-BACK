@@ -2,6 +2,7 @@ package com.example.INFO.domain.user.controller;
 
 import com.example.INFO.domain.auth.dto.request.UserLoginRequest;
 import com.example.INFO.domain.auth.dto.request.UserRefreshRequest;
+import com.example.INFO.domain.auth.service.UserAuthService;
 import com.example.INFO.domain.user.dto.request.UserSignupRequest;
 import com.example.INFO.domain.auth.dto.response.UserLoginResponse;
 import com.example.INFO.domain.auth.dto.response.UserRefreshResponse;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final UserAuthService userAuthService;
 
     @PostMapping
     public ResponseEntity<Void> signup(@RequestBody UserSignupRequest request) {
@@ -29,14 +31,14 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
-        JwtTokenDto jwtTokenDto = userService.login(request.getUsername(), request.getPassword());
+        JwtTokenDto jwtTokenDto = userAuthService.login(request.getUsername(), request.getPassword());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(UserLoginResponse.from(jwtTokenDto));
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<UserRefreshResponse> refresh(@RequestBody UserRefreshRequest request) {
-        JwtTokenDto jwtTokenDto = userService.refresh(request.getRefreshToken());
+        JwtTokenDto jwtTokenDto = userAuthService.refresh(request.getRefreshToken());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(UserRefreshResponse.from(jwtTokenDto));
     }

@@ -1,7 +1,7 @@
 package com.example.INFO.domain.auth.config.filter;
 
-import com.example.INFO.domain.user.service.CustomUserDetailsService;
-import com.example.INFO.domain.user.service.JwtTokenService;
+import com.example.INFO.domain.auth.service.CustomUserDetailsService;
+import com.example.INFO.domain.auth.service.JwtTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

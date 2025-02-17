@@ -2,8 +2,8 @@ package com.example.INFO.domain.auth.config;
 
 import com.example.INFO.domain.auth.config.filter.JwtTokenFilter;
 import com.example.INFO.domain.user.exception.CustomAuthenticationEntryPoint;
-import com.example.INFO.domain.user.service.CustomUserDetailsService;
-import com.example.INFO.domain.user.service.JwtTokenService;
+import com.example.INFO.domain.auth.service.CustomUserDetailsService;
+import com.example.INFO.domain.auth.service.JwtTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

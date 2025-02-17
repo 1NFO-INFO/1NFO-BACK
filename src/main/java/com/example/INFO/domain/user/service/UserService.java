@@ -2,6 +2,7 @@ package com.example.INFO.domain.user.service;
 
 import com.example.INFO.domain.auth.dto.JwtTokenDto;
 import com.example.INFO.domain.auth.dto.KakaoOAuthUserInfoDto;
+import com.example.INFO.domain.auth.service.JwtTokenService;
 import com.example.INFO.domain.user.exception.UserException;
 import com.example.INFO.domain.user.exception.UserExceptionType;
 import com.example.INFO.domain.auth.model.constant.OAuthProvider;
@@ -30,9 +31,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final LocalAuthDetailsRepository localAuthDetailsRepository;
     private final OAuthDetailsRepository oAuthDetailsRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenService jwtTokenService;
 
     public void createUser(String username, String password) {
         if (localAuthDetailsRepository.existsByUsername(username)) {
@@ -66,65 +65,5 @@ public class UserService {
         UserEntity user = userRepository.save(UserEntity.of(email));
 
         oAuthDetailsRepository.save(OAuthDetailsEntity.of(user, email, OAuthProvider.KAKAO));
-    }
-
-    public JwtTokenDto login(KakaoOAuthUserInfoDto kakaoOAuthUserInfoDto) {
-        String email = kakaoOAuthUserInfoDto.getEmail();
-
-        OAuthDetailsEntity kakaoOAuthDetails = oAuthDetailsRepository.findByEmailAndProvider(kakaoOAuthUserInfoDto.getEmail(), OAuthProvider.KAKAO)
-                .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
-
-        JwtTokenDto jwtTokenDto = jwtTokenService.generateJwtToken(kakaoOAuthDetails.getId());
-        String refreshToken = jwtTokenDto.getRefreshToken();
-        LocalDateTime refreshTokenIssuedAt = jwtTokenService.getIssuedAt(refreshToken);
-        LocalDateTime refreshTokenExpiration = jwtTokenService.getExpiration(refreshToken);
-
-        RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.of(
-                kakaoOAuthDetails.getUser(),
-                jwtTokenDto.getRefreshToken(),
-                refreshTokenIssuedAt,
-                refreshTokenExpiration
-        );
-
-        refreshTokenRepository.save(refreshTokenEntity);
-
-        return jwtTokenDto;
-    }
-
-    public JwtTokenDto login(String username, String password) {
-        log.debug("login try: username: {}, password: {}", username, password);
-        LocalAuthDetailsEntity localAuthDetails = localAuthDetailsRepository.findByUsername(username)
-                .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
-
-        if (!passwordEncoder.matches(password, localAuthDetails.getPassword())) {
-            log.debug("password is not matched");
-            throw new UserException(UserExceptionType.INVALID_PASSWORD);
-        }
-
-        JwtTokenDto jwtTokenDto = jwtTokenService.generateJwtToken(localAuthDetails.getId());
-        String refreshToken = jwtTokenDto.getRefreshToken();
-        LocalDateTime refreshTokenIssuedAt = jwtTokenService.getIssuedAt(refreshToken);
-        LocalDateTime refreshTokenExpiration = jwtTokenService.getExpiration(refreshToken);
-
-        RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.of(localAuthDetails.getUser(), jwtTokenDto.getRefreshToken(), refreshTokenIssuedAt, refreshTokenExpiration);
-        refreshTokenRepository.save(refreshTokenEntity);
-
-        return jwtTokenDto;
-    }
-
-    public JwtTokenDto refresh(String refreshToken) {
-        // refresh token이 만료되었는지 확인
-        if (jwtTokenService.isExpired(refreshToken)) {
-            throw new UserException(UserExceptionType.INVALID_REFRESH_TOKEN);
-        }
-
-        // repository에서 refresh token이 존재하는지 확인
-        if (!refreshTokenRepository.existsByValue(refreshToken)) {
-            throw new UserException(UserExceptionType.INVALID_REFRESH_TOKEN);
-        }
-
-        // refresh token이 유효하다면 새로운 JWT token을 발급
-        long userId = jwtTokenService.getUserId(refreshToken);
-        return jwtTokenService.generateJwtToken(userId);
     }
 }

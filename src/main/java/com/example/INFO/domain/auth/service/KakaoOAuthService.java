@@ -1,4 +1,4 @@
-package com.example.INFO.domain.user.service;
+package com.example.INFO.domain.auth.service;
 
 import com.example.INFO.domain.auth.dto.KakaoOAuthTokenDto;
 import com.example.INFO.domain.auth.dto.KakaoOAuthUserInfoDto;

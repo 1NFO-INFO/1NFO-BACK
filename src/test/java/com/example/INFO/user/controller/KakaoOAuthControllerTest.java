@@ -2,7 +2,8 @@ package com.example.INFO.user.controller;
 
 import com.example.INFO.domain.auth.dto.JwtTokenDto;
 import com.example.INFO.domain.auth.dto.KakaoOAuthUserInfoDto;
-import com.example.INFO.domain.user.service.KakaoOAuthService;
+import com.example.INFO.domain.auth.service.KakaoOAuthService;
+import com.example.INFO.domain.auth.service.UserAuthService;
 import com.example.INFO.domain.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,9 @@ class KakaoOAuthControllerTest {
     @MockitoBean
     private UserService userService;
 
+    @MockitoBean
+    private UserAuthService userAuthService;
+
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
 
@@ -56,7 +60,7 @@ class KakaoOAuthControllerTest {
         given(kakaoOAuthService.getAccessToken(any())).willReturn(accessToken);
         given(kakaoOAuthService.getUserInfo(accessToken)).willReturn(userInfo);
         doNothing().when(userService).tryCreateUser(userInfo);
-        given(userService.login(userInfo)).willReturn(jwtTokenDto);
+        given(userAuthService.login(userInfo)).willReturn(jwtTokenDto);
 
         mockMvc.perform(
                 get("/oauth/kakao/callback")
@@ -75,7 +79,7 @@ class KakaoOAuthControllerTest {
         given(kakaoOAuthService.getAccessToken(any())).willReturn(accessToken);
         given(kakaoOAuthService.getUserInfo(accessToken)).willReturn(userInfo);
         doNothing().when(userService).tryCreateUser(userInfo);
-        given(userService.login(userInfo)).willReturn(jwtTokenDto);
+        given(userAuthService.login(userInfo)).willReturn(jwtTokenDto);
 
         mockMvc.perform(
                 get("/oauth/kakao/callback")

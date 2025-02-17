@@ -3,6 +3,7 @@ package com.example.INFO.user.controller;
 import com.example.INFO.domain.auth.dto.JwtTokenDto;
 import com.example.INFO.domain.auth.dto.request.UserLoginRequest;
 import com.example.INFO.domain.auth.dto.request.UserRefreshRequest;
+import com.example.INFO.domain.auth.service.UserAuthService;
 import com.example.INFO.domain.user.dto.request.UserSignupRequest;
 import com.example.INFO.domain.user.exception.UserException;
 import com.example.INFO.domain.user.exception.UserExceptionType;
@@ -33,6 +34,9 @@ public class UserControllerTest {
 
     @MockitoBean
     private UserService userService;
+
+    @MockitoBean
+    private UserAuthService userAuthService;
 
     @Test
     public void 회원가입() throws Exception {
@@ -68,7 +72,7 @@ public class UserControllerTest {
         String username = "username";
         String password = "password";
 
-        when(userService.login(username, password))
+        when(userAuthService.login(username, password))
                 .thenReturn(mock(JwtTokenDto.class));
 
         mockMvc.perform(
@@ -85,7 +89,7 @@ public class UserControllerTest {
         String password = "password";
 
         doThrow(new UserException(UserExceptionType.USER_NOT_FOUND))
-                .when(userService).login(username, password);
+                .when(userAuthService).login(username, password);
 
         mockMvc.perform(
                 post("/users/login")
@@ -100,7 +104,7 @@ public class UserControllerTest {
         String username = "username";
         String password = "password";
 
-        when(userService.login(username, password))
+        when(userAuthService.login(username, password))
                 .thenThrow(new UserException(UserExceptionType.INVALID_PASSWORD));
 
         mockMvc.perform(
@@ -116,7 +120,7 @@ public class UserControllerTest {
         String accessToken = "access-token";
         String refreshToken = "refresh-token";
 
-        when(userService.refresh(refreshToken))
+        when(userAuthService.refresh(refreshToken))
                 .thenReturn(JwtTokenDto.of(accessToken, refreshToken));
 
         mockMvc.perform(
@@ -131,7 +135,7 @@ public class UserControllerTest {
     public void 리프레쉬_실패시_Unauthorized를_반환한다() throws Exception {
         String refreshToken = "refresh-token";
 
-        when(userService.refresh(refreshToken))
+        when(userAuthService.refresh(refreshToken))
                 .thenThrow(new UserException(UserExceptionType.INVALID_REFRESH_TOKEN));
 
         mockMvc.perform(

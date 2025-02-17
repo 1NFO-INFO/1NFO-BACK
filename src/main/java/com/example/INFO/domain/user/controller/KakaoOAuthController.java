@@ -3,7 +3,8 @@ package com.example.INFO.domain.user.controller;
 import com.example.INFO.domain.auth.dto.JwtTokenDto;
 import com.example.INFO.domain.auth.dto.KakaoOAuthUserInfoDto;
 import com.example.INFO.domain.auth.dto.response.UserLoginResponse;
-import com.example.INFO.domain.user.service.KakaoOAuthService;
+import com.example.INFO.domain.auth.service.KakaoOAuthService;
+import com.example.INFO.domain.auth.service.UserAuthService;
 import com.example.INFO.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -21,6 +22,7 @@ public class KakaoOAuthController {
 
     private final KakaoOAuthService kakaoOAuthService;
     private final UserService userService;
+    private final UserAuthService userAuthService;
 
     @GetMapping("/authorize")
     public ResponseEntity<Void> authorize() {
@@ -45,7 +47,7 @@ public class KakaoOAuthController {
         KakaoOAuthUserInfoDto userInfo = kakaoOAuthService.getUserInfo(accessToken);
 
         userService.tryCreateUser(userInfo);
-        JwtTokenDto jwtTokenDto = userService.login(userInfo);
+        JwtTokenDto jwtTokenDto = userAuthService.login(userInfo);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(UserLoginResponse.from(jwtTokenDto));

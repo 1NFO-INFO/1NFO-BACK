@@ -3,7 +3,7 @@ package com.example.INFO.domain.board.controller;
 import com.example.INFO.domain.board.dto.req.CommentCreateRequest;
 import com.example.INFO.domain.board.dto.res.CommentResponse;
 import com.example.INFO.domain.board.service.CommentService;
-import com.example.INFO.domain.user.service.AuthUserService;
+import com.example.INFO.domain.auth.service.AuthUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

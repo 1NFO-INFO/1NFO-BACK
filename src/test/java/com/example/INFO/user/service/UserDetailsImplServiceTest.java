@@ -5,7 +5,7 @@ import com.example.INFO.domain.user.exception.UserExceptionType;
 import com.example.INFO.domain.auth.model.entity.LocalAuthDetailsEntity;
 import com.example.INFO.domain.user.model.entity.UserEntity;
 import com.example.INFO.domain.user.repository.UserRepository;
-import com.example.INFO.domain.user.service.CustomUserDetailsService;
+import com.example.INFO.domain.auth.service.CustomUserDetailsService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

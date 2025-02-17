@@ -10,7 +10,7 @@ import com.example.INFO.domain.user.exception.UserException;
 import com.example.INFO.domain.user.exception.UserExceptionType;
 import com.example.INFO.domain.user.model.entity.UserEntity;
 import com.example.INFO.domain.user.repository.UserRepository;
-import com.example.INFO.domain.user.service.AuthUserService;
+import com.example.INFO.domain.auth.service.AuthUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
