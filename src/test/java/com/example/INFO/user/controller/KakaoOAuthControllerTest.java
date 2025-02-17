@@ -1,7 +1,7 @@
 package com.example.INFO.user.controller;
 
-import com.example.INFO.domain.user.dto.JwtTokenDto;
-import com.example.INFO.domain.user.dto.KakaoOAuthUserInfoDto;
+import com.example.INFO.domain.auth.dto.JwtTokenDto;
+import com.example.INFO.domain.auth.dto.KakaoOAuthUserInfoDto;
 import com.example.INFO.domain.user.service.KakaoOAuthService;
 import com.example.INFO.domain.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;

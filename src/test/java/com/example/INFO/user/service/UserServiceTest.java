@@ -1,7 +1,7 @@
 package com.example.INFO.user.service;
 
-import com.example.INFO.domain.user.dto.JwtTokenDto;
-import com.example.INFO.domain.user.dto.KakaoOAuthUserInfoDto;
+import com.example.INFO.domain.auth.dto.JwtTokenDto;
+import com.example.INFO.domain.auth.dto.KakaoOAuthUserInfoDto;
 import com.example.INFO.domain.user.exception.UserException;
 import com.example.INFO.domain.user.exception.UserExceptionType;
 import com.example.INFO.domain.auth.model.constant.OAuthProvider;

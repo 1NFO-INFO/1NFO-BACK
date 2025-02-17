@@ -1,4 +1,4 @@
-package com.example.INFO.domain.user.dto.request;
+package com.example.INFO.domain.auth.dto.request;
 
 import lombok.Value;
 

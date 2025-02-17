@@ -1,10 +1,10 @@
 package com.example.INFO.domain.user.service;
 
-import com.example.INFO.domain.user.dto.KakaoOAuthTokenDto;
-import com.example.INFO.domain.user.dto.KakaoOAuthUserInfoDto;
-import com.example.INFO.domain.user.dto.request.KakaoOAuthTokenRequest;
-import com.example.INFO.domain.user.dto.response.KakaoOAuthTokenResponse;
-import com.example.INFO.domain.user.dto.response.KakaoOAuthUserInfoResponse;
+import com.example.INFO.domain.auth.dto.KakaoOAuthTokenDto;
+import com.example.INFO.domain.auth.dto.KakaoOAuthUserInfoDto;
+import com.example.INFO.domain.auth.dto.request.KakaoOAuthTokenRequest;
+import com.example.INFO.domain.auth.dto.response.KakaoOAuthTokenResponse;
+import com.example.INFO.domain.auth.dto.response.KakaoOAuthUserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;

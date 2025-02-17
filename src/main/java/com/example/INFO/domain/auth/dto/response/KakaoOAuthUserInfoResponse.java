@@ -1,6 +1,6 @@
-package com.example.INFO.domain.user.dto.response;
+package com.example.INFO.domain.auth.dto.response;
 
-import com.example.INFO.domain.user.dto.KakaoOAuthUserInfoDto;
+import com.example.INFO.domain.auth.dto.KakaoOAuthUserInfoDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 

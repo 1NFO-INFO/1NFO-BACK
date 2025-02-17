@@ -1,4 +1,4 @@
-package com.example.INFO.domain.user.dto;
+package com.example.INFO.domain.auth.dto;
 
 import com.example.INFO.domain.auth.model.entity.LocalAuthDetailsEntity;
 import com.example.INFO.domain.user.model.entity.UserEntity;

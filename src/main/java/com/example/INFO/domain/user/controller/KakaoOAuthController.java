@@ -1,8 +1,8 @@
 package com.example.INFO.domain.user.controller;
 
-import com.example.INFO.domain.user.dto.JwtTokenDto;
-import com.example.INFO.domain.user.dto.KakaoOAuthUserInfoDto;
-import com.example.INFO.domain.user.dto.response.UserLoginResponse;
+import com.example.INFO.domain.auth.dto.JwtTokenDto;
+import com.example.INFO.domain.auth.dto.KakaoOAuthUserInfoDto;
+import com.example.INFO.domain.auth.dto.response.UserLoginResponse;
 import com.example.INFO.domain.user.service.KakaoOAuthService;
 import com.example.INFO.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;

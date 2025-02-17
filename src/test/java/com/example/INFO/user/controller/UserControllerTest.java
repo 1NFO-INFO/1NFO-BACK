@@ -1,8 +1,8 @@
 package com.example.INFO.user.controller;
 
-import com.example.INFO.domain.user.dto.JwtTokenDto;
-import com.example.INFO.domain.user.dto.request.UserLoginRequest;
-import com.example.INFO.domain.user.dto.request.UserRefreshRequest;
+import com.example.INFO.domain.auth.dto.JwtTokenDto;
+import com.example.INFO.domain.auth.dto.request.UserLoginRequest;
+import com.example.INFO.domain.auth.dto.request.UserRefreshRequest;
 import com.example.INFO.domain.user.dto.request.UserSignupRequest;
 import com.example.INFO.domain.user.exception.UserException;
 import com.example.INFO.domain.user.exception.UserExceptionType;

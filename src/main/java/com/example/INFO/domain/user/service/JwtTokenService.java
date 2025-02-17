@@ -1,6 +1,6 @@
 package com.example.INFO.domain.user.service;
 
-import com.example.INFO.domain.user.dto.JwtTokenDto;
+import com.example.INFO.domain.auth.dto.JwtTokenDto;
 import com.example.INFO.domain.auth.properties.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

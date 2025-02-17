@@ -1,6 +1,6 @@
 package com.example.INFO.domain.user.service;
 
-import com.example.INFO.domain.user.dto.UserDetailsImpl;
+import com.example.INFO.domain.auth.dto.UserDetailsImpl;
 import com.example.INFO.domain.user.exception.UserException;
 import com.example.INFO.domain.user.exception.UserExceptionType;
 import com.example.INFO.domain.user.repository.UserRepository;
