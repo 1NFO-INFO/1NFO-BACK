@@ -1,4 +1,4 @@
-package com.example.INFO.domain.user.controller;
+package com.example.INFO.domain.auth.contorller;
 
 import com.example.INFO.domain.auth.dto.JwtTokenDto;
 import com.example.INFO.domain.auth.dto.KakaoOAuthUserInfoDto;

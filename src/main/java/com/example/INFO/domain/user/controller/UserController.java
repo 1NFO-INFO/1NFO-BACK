@@ -21,25 +21,10 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private final UserAuthService userAuthService;
 
     @PostMapping
     public ResponseEntity<Void> signup(@RequestBody UserSignupRequest request) {
         userService.createUser(request.getUsername(), request.getPassword());
         return ResponseEntity.status(HttpStatus.OK).build();
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
-        JwtTokenDto jwtTokenDto = userAuthService.login(request.getUsername(), request.getPassword());
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(UserLoginResponse.from(jwtTokenDto));
-    }
-
-    @PostMapping("/refresh")
-    public ResponseEntity<UserRefreshResponse> refresh(@RequestBody UserRefreshRequest request) {
-        JwtTokenDto jwtTokenDto = userAuthService.refresh(request.getRefreshToken());
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(UserRefreshResponse.from(jwtTokenDto));
     }
 }
