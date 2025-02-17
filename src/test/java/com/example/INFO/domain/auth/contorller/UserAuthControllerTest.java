@@ -47,7 +47,7 @@ public class UserAuthControllerTest {
                 .thenReturn(mock(JwtTokenDto.class));
 
         mockMvc.perform(
-                        post("/users/login")
+                        post("/api/v1/auth/login")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsBytes(new UserLoginRequest(username, password)))
                 ).andDo(print())
@@ -63,7 +63,7 @@ public class UserAuthControllerTest {
                 .when(userAuthService).login(username, password);
 
         mockMvc.perform(
-                        post("/users/login")
+                        post("/api/v1/auth/login")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsBytes(new UserLoginRequest(username, password)))
                 ).andDo(print())
@@ -79,7 +79,7 @@ public class UserAuthControllerTest {
                 .thenThrow(new UserException(UserExceptionType.INVALID_PASSWORD));
 
         mockMvc.perform(
-                        post("/users/login")
+                        post("/api/v1/auth/login")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsBytes(new UserLoginRequest(username, password)))
                 ).andDo(print())
@@ -95,7 +95,7 @@ public class UserAuthControllerTest {
                 .thenReturn(JwtTokenDto.of(accessToken, refreshToken));
 
         mockMvc.perform(
-                        post("/users/refresh")
+                        post("/api/v1/auth/refresh")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsBytes(new UserRefreshRequest(refreshToken)))
                 ).andDo(print())
@@ -110,7 +110,7 @@ public class UserAuthControllerTest {
                 .thenThrow(new UserException(UserExceptionType.INVALID_REFRESH_TOKEN));
 
         mockMvc.perform(
-                        post("/users/refresh")
+                        post("/api/v1/auth/refresh")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsBytes(new UserRefreshRequest(refreshToken)))
                 ).andDo(print())

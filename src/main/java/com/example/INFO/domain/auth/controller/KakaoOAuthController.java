@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/oauth/kakao")
+@RequestMapping("/api/v1/oauth/kakao")
 @RequiredArgsConstructor
 @Log4j2
 public class KakaoOAuthController {

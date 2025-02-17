@@ -46,7 +46,7 @@ class KakaoOAuthControllerTest {
         String authorizationUri = "authorization-uri";
         given(kakaoOAuthService.getAuthorizationUri()).willReturn(authorizationUri);
 
-        mockMvc.perform(get("/oauth/kakao/authorize"))
+        mockMvc.perform(get("/api/v1/oauth/kakao/authorize"))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(authorizationUri));
     }
@@ -63,7 +63,7 @@ class KakaoOAuthControllerTest {
         given(userAuthService.login(userInfo)).willReturn(jwtTokenDto);
 
         mockMvc.perform(
-                get("/oauth/kakao/callback")
+                get("/api/v1/oauth/kakao/callback")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("code", "code")
                 ).andDo(print())
@@ -82,7 +82,7 @@ class KakaoOAuthControllerTest {
         given(userAuthService.login(userInfo)).willReturn(jwtTokenDto);
 
         mockMvc.perform(
-                get("/oauth/kakao/callback")
+                get("/api/v1/oauth/kakao/callback")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("error", "error")
                         .param("error_description", "error_description")

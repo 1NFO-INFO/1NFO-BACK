@@ -29,8 +29,8 @@ public class SecurityConfig {
     };
 
     private static final String[] PUBLIC_GET_URLS = {
-            "/oauth/kakao/authorize",
-            "/oauth/kakao/callback",
+            "/api/v1/oauth/kakao/authorize",
+            "/api/v1/oauth/kakao/callback",
             "/api/v1/boards/search/**",
             "/api/v1/boards/category",
             "/api/v1/comments/search/board/**",
@@ -38,9 +38,9 @@ public class SecurityConfig {
     };
 
     private static final String[] PUBLIC_POST_URLS = {
-            "/users",
-            "/users/login",
-            "/users/refresh"
+            "/api/v1/auth",
+            "/api/v1/auth/login",
+            "/api/v1/auth/refresh"
     };
 
     private final JwtTokenService jwtTokenService;

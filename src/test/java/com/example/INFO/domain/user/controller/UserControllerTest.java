@@ -41,7 +41,7 @@ public class UserControllerTest {
         String password = "password";
 
         mockMvc.perform(
-                post("/users")
+                post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(new UserSignupRequest(username, password)))
                 ).andDo(print())
@@ -57,7 +57,7 @@ public class UserControllerTest {
                 .when(userService).createUser(username, password);
 
         mockMvc.perform(
-                post("/users")
+                post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(new UserSignupRequest(username, password)))
                 ).andDo(print())

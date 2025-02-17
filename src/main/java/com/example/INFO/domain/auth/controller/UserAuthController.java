@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class UserAuthController {
 
