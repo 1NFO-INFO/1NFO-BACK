@@ -9,7 +9,8 @@ public enum ErrorCode {
     INVALID_FILE_PATH(400, "E003", "잘못된 파일 경로 입니다."),
     INVALID_OPTIONAL_ISPRESENT(400, "E004", "해당 값이 존재하지 않습니다."),
     INVALID_CHECK(400, "E005", "해당 값이 유효하지 않습니다."),
-    INVALID_AUTHENTICATION(400, "E006", "잘못된 인증입니다."),
+    INVALID_AUTHENTICATION(401, "E006", "잘못된 인증입니다."),
+    INVALID_PASSWORD(401, "E006", "잘못된 비밀번호입니다."),
     INVALID_TOKEN(400, "E007", "잘못된 토큰입니다."),
     NOT_FOUND(404, "E008", "해당 데이터를 찾을 수 없습니다."),
     DUPLICATE_ERROR(409, "E009", "중복된 데이터가 존재합니다."),
@@ -19,7 +20,9 @@ public enum ErrorCode {
     IO_EXCEPTION_ON_IMAGE_DELETE(500, "E013", "이미지 삭제 중 IO 예외 발생"),
     NO_FILE_EXTENSION(400, "E014", "파일 확장자가 없습니다."),
     INVALID_FILE_EXTENSION(400, "E015", "잘못된 파일 확장자입니다."),
-    PUT_OBJECT_EXCEPTION(500, "E016", "S3 객체 업로드 중 오류 발생");
+    PUT_OBJECT_EXCEPTION(500, "E016", "S3 객체 업로드 중 오류 발생"),
+    INTERNAL_SERVER_ERROR(500, "E017", "서버 내부 오류 발생")
+    ;
 
     private final int status;
     private final String code;

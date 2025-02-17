@@ -2,9 +2,9 @@ package com.example.INFO.domain.user.controller;
 
 import com.example.INFO.domain.auth.service.UserAuthService;
 import com.example.INFO.domain.user.dto.request.UserSignupRequest;
-import com.example.INFO.domain.user.exception.UserException;
-import com.example.INFO.domain.user.exception.UserExceptionType;
 import com.example.INFO.domain.user.service.UserService;
+import com.example.INFO.global.exception.DefaultException;
+import com.example.INFO.global.payload.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ public class UserControllerTest {
         String username = "username";
         String password = "password";
 
-        doThrow(new UserException(UserExceptionType.DUPLICATED_USERNAME))
+        doThrow(new DefaultException(ErrorCode.DUPLICATE_ERROR))
                 .when(userService).createUser(username, password);
 
         mockMvc.perform(

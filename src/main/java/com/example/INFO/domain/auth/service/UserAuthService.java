@@ -9,8 +9,8 @@ import com.example.INFO.domain.auth.model.entity.RefreshTokenEntity;
 import com.example.INFO.domain.auth.repository.LocalAuthDetailsRepository;
 import com.example.INFO.domain.auth.repository.OAuthDetailsRepository;
 import com.example.INFO.domain.auth.repository.RefreshTokenRepository;
-import com.example.INFO.domain.user.exception.UserException;
-import com.example.INFO.domain.user.exception.UserExceptionType;
+import com.example.INFO.global.exception.DefaultException;
+import com.example.INFO.global.payload.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,7 +33,7 @@ public class UserAuthService {
         String email = kakaoOAuthUserInfoDto.getEmail();
 
         OAuthDetailsEntity kakaoOAuthDetails = oAuthDetailsRepository.findByEmailAndProvider(kakaoOAuthUserInfoDto.getEmail(), OAuthProvider.KAKAO)
-                .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
+                .orElseThrow(() -> new DefaultException(ErrorCode.NOT_FOUND));
 
         JwtTokenDto jwtTokenDto = jwtTokenService.generateJwtToken(kakaoOAuthDetails.getId());
         String refreshToken = jwtTokenDto.getRefreshToken();
@@ -55,11 +55,11 @@ public class UserAuthService {
     public JwtTokenDto login(String username, String password) {
         log.debug("login try: username: {}, password: {}", username, password);
         LocalAuthDetailsEntity localAuthDetails = localAuthDetailsRepository.findByUsername(username)
-                .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
+                .orElseThrow(() -> new DefaultException(ErrorCode.NOT_FOUND));
 
         if (!passwordEncoder.matches(password, localAuthDetails.getPassword())) {
             log.debug("password is not matched");
-            throw new UserException(UserExceptionType.INVALID_PASSWORD);
+            throw new DefaultException(ErrorCode.INVALID_PASSWORD);
         }
 
         JwtTokenDto jwtTokenDto = jwtTokenService.generateJwtToken(localAuthDetails.getId());
@@ -76,12 +76,12 @@ public class UserAuthService {
     public JwtTokenDto refresh(String refreshToken) {
         // refresh token이 만료되었는지 확인
         if (jwtTokenService.isExpired(refreshToken)) {
-            throw new UserException(UserExceptionType.INVALID_REFRESH_TOKEN);
+            throw new DefaultException(ErrorCode.INVALID_AUTHENTICATION);
         }
 
         // repository에서 refresh token이 존재하는지 확인
         if (!refreshTokenRepository.existsByValue(refreshToken)) {
-            throw new UserException(UserExceptionType.INVALID_REFRESH_TOKEN);
+            throw new DefaultException(ErrorCode.INVALID_AUTHENTICATION);
         }
 
         // refresh token이 유효하다면 새로운 JWT token을 발급

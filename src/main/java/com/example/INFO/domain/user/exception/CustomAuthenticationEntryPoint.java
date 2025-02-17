@@ -1,8 +1,10 @@
 package com.example.INFO.domain.user.exception;
 
+import com.example.INFO.global.payload.ErrorCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
@@ -15,6 +17,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             HttpServletRequest request, HttpServletResponse response, AuthenticationException authException
     ) throws IOException, ServletException {
         response.setContentType("application/json");
-        response.setStatus(UserExceptionType.INVALID_ACCESS_TOKEN.getStatus().value());
+        response.setStatus(ErrorCode.INVALID_TOKEN.getStatus());
     }
 }

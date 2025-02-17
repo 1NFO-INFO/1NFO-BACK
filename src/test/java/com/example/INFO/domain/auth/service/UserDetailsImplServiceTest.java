@@ -1,11 +1,10 @@
 package com.example.INFO.domain.auth.service;
 
-import com.example.INFO.domain.user.exception.UserException;
-import com.example.INFO.domain.user.exception.UserExceptionType;
 import com.example.INFO.domain.auth.model.entity.LocalAuthDetailsEntity;
 import com.example.INFO.domain.user.model.entity.UserEntity;
 import com.example.INFO.domain.user.repository.UserRepository;
-import com.example.INFO.domain.auth.service.CustomUserDetailsService;
+import com.example.INFO.global.exception.DefaultException;
+import com.example.INFO.global.payload.ErrorCode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -39,9 +38,9 @@ class UserDetailsImplServiceTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        UserException e = Assertions.assertThrows(UserException.class, () -> {
+        DefaultException e = Assertions.assertThrows(DefaultException.class, () -> {
             userDetailsService.loadUserByUserId(userId);
         });
-        Assertions.assertEquals(UserExceptionType.USER_NOT_FOUND, e.getType());
+        Assertions.assertEquals(ErrorCode.NOT_FOUND, e.getErrorCode());
     }
 }

@@ -1,28 +1,19 @@
 package com.example.INFO.domain.user.service;
 
-import com.example.INFO.domain.auth.dto.JwtTokenDto;
 import com.example.INFO.domain.auth.dto.KakaoOAuthUserInfoDto;
-import com.example.INFO.domain.user.exception.UserException;
-import com.example.INFO.domain.user.exception.UserExceptionType;
 import com.example.INFO.domain.auth.model.constant.OAuthProvider;
-import com.example.INFO.domain.auth.model.entity.LocalAuthDetailsEntity;
-import com.example.INFO.domain.auth.properties.JwtProperties;
 import com.example.INFO.domain.auth.repository.LocalAuthDetailsRepository;
 import com.example.INFO.domain.auth.repository.OAuthDetailsRepository;
-import com.example.INFO.domain.auth.repository.RefreshTokenRepository;
 import com.example.INFO.domain.user.repository.UserRepository;
 import com.example.INFO.domain.auth.service.JwtTokenService;
-import com.example.INFO.domain.user.service.UserService;
-import org.junit.jupiter.api.Assertions;
+import com.example.INFO.global.exception.DefaultException;
+import com.example.INFO.global.payload.ErrorCode;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -59,8 +50,8 @@ class UserServiceTest {
 
         when(localAuthDetailsRepository.existsByUsername(username)).thenReturn(true);
 
-        UserException e = assertThrows(UserException.class, () -> userService.createUser(username, password));
-        assertThat(e.getType()).isEqualTo(UserExceptionType.DUPLICATED_USERNAME);
+        DefaultException e = assertThrows(DefaultException.class, () -> userService.createUser(username, password));
+        assertThat(e.getErrorCode()).isEqualTo(ErrorCode.DUPLICATE_ERROR);
     }
 
     @Test
@@ -83,8 +74,8 @@ class UserServiceTest {
 
         when(oAuthDetailsRepository.existsByEmailAndProvider(email, provider)).thenReturn(true);
 
-        UserException e = assertThrows(UserException.class, () -> userService.createUser(userInfo));
-        assertThat(e.getType()).isEqualTo(UserExceptionType.DUPLICATED_EMAIL);
+        DefaultException e = assertThrows(DefaultException.class, () -> userService.createUser(userInfo));
+        assertThat(e.getErrorCode()).isEqualTo(ErrorCode.DUPLICATE_ERROR);
     }
 
 

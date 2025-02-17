@@ -1,19 +1,15 @@
 package com.example.INFO.domain.user.service;
 
-import com.example.INFO.domain.auth.dto.JwtTokenDto;
 import com.example.INFO.domain.auth.dto.KakaoOAuthUserInfoDto;
-import com.example.INFO.domain.auth.service.JwtTokenService;
-import com.example.INFO.domain.user.exception.UserException;
-import com.example.INFO.domain.user.exception.UserExceptionType;
 import com.example.INFO.domain.auth.model.constant.OAuthProvider;
 import com.example.INFO.domain.auth.model.entity.LocalAuthDetailsEntity;
 import com.example.INFO.domain.auth.model.entity.OAuthDetailsEntity;
-import com.example.INFO.domain.auth.model.entity.RefreshTokenEntity;
 import com.example.INFO.domain.user.model.entity.UserEntity;
 import com.example.INFO.domain.auth.repository.LocalAuthDetailsRepository;
 import com.example.INFO.domain.auth.repository.OAuthDetailsRepository;
-import com.example.INFO.domain.auth.repository.RefreshTokenRepository;
 import com.example.INFO.domain.user.repository.UserRepository;
+import com.example.INFO.global.exception.DefaultException;
+import com.example.INFO.global.payload.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,7 +32,7 @@ public class UserService {
     public void createUser(String username, String password) {
         if (localAuthDetailsRepository.existsByUsername(username)) {
             log.debug("username: {} is duplicated", username);
-            throw new UserException(UserExceptionType.DUPLICATED_USERNAME);
+            throw new DefaultException(ErrorCode.DUPLICATE_ERROR);
         }
 
         UserEntity user = userRepository.save(UserEntity.of(username));
@@ -51,7 +47,7 @@ public class UserService {
     public void tryCreateUser(KakaoOAuthUserInfoDto kakaoOAuthUserInfoDto) {
         try {
             createUser(kakaoOAuthUserInfoDto);
-        } catch (UserException ignored) {
+        } catch (DefaultException ignored) {
         }
     }
 
@@ -59,7 +55,7 @@ public class UserService {
         String email = kakaoOAuthUserInfoDto.getEmail();
 
         if (oAuthDetailsRepository.existsByEmailAndProvider(email, OAuthProvider.KAKAO)) {
-            throw new UserException(UserExceptionType.DUPLICATED_EMAIL);
+            throw new DefaultException(ErrorCode.DUPLICATE_ERROR);
         }
 
         UserEntity user = userRepository.save(UserEntity.of(email));

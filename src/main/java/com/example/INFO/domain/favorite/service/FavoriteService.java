@@ -6,11 +6,11 @@ import com.example.INFO.domain.favorite.dto.res.PagedResponseDto;
 import com.example.INFO.domain.favorite.dto.res.TicketDataResponseDto;
 import com.example.INFO.domain.ticket.domain.TicketData;
 import com.example.INFO.domain.ticket.domain.repository.TicketDataRepository;
-import com.example.INFO.domain.user.exception.UserException;
-import com.example.INFO.domain.user.exception.UserExceptionType;
 import com.example.INFO.domain.user.model.entity.UserEntity;
 import com.example.INFO.domain.user.repository.UserRepository;
 import com.example.INFO.domain.auth.service.AuthUserService;
+import com.example.INFO.global.exception.DefaultException;
+import com.example.INFO.global.payload.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +31,7 @@ public class FavoriteService {
     public void likeTicket(String ticketSeq) {
         long userId = authUserService.getAuthenticatedUserId();
         UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
+                .orElseThrow(() -> new DefaultException(ErrorCode.NOT_FOUND));
 
         TicketData ticket = ticketDataRepository.findById(ticketSeq)
                 .orElseThrow(() -> new IllegalArgumentException("해당 티켓이 존재하지 않습니다."));
@@ -50,7 +50,7 @@ public class FavoriteService {
     public void unlikeTicket(String ticketSeq) {
         long userId = authUserService.getAuthenticatedUserId();
         UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
+                .orElseThrow(() -> new DefaultException(ErrorCode.NOT_FOUND));
 
         TicketData ticket = ticketDataRepository.findById(ticketSeq)
                 .orElseThrow(() -> new IllegalArgumentException("해당 티켓이 존재하지 않습니다."));
@@ -64,7 +64,7 @@ public class FavoriteService {
     public PagedResponseDto<TicketDataResponseDto> getFavoriteTickets(Pageable pageable) {
         long userId = authUserService.getAuthenticatedUserId();
         UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
+                .orElseThrow(() -> new DefaultException(ErrorCode.NOT_FOUND));
 
         Page<TicketDataResponseDto> favoriteTickets = favoriteRepository.findByUser(user, pageable)
                 .map(favorite -> mapToResponseDto(favorite.getTicket())); // 변환 메서드 호출

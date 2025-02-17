@@ -4,9 +4,9 @@ import com.example.INFO.domain.auth.dto.JwtTokenDto;
 import com.example.INFO.domain.auth.dto.request.UserLoginRequest;
 import com.example.INFO.domain.auth.dto.request.UserRefreshRequest;
 import com.example.INFO.domain.auth.service.UserAuthService;
-import com.example.INFO.domain.user.exception.UserException;
-import com.example.INFO.domain.user.exception.UserExceptionType;
 import com.example.INFO.domain.user.service.UserService;
+import com.example.INFO.global.exception.DefaultException;
+import com.example.INFO.global.payload.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -59,7 +59,7 @@ public class UserAuthControllerTest {
         String username = "username";
         String password = "password";
 
-        doThrow(new UserException(UserExceptionType.USER_NOT_FOUND))
+        doThrow(new DefaultException(ErrorCode.NOT_FOUND))
                 .when(userAuthService).login(username, password);
 
         mockMvc.perform(
@@ -76,7 +76,7 @@ public class UserAuthControllerTest {
         String password = "password";
 
         when(userAuthService.login(username, password))
-                .thenThrow(new UserException(UserExceptionType.INVALID_PASSWORD));
+                .thenThrow(new DefaultException(ErrorCode.INVALID_PASSWORD));
 
         mockMvc.perform(
                         post("/api/v1/auth/login")
@@ -107,7 +107,7 @@ public class UserAuthControllerTest {
         String refreshToken = "refresh-token";
 
         when(userAuthService.refresh(refreshToken))
-                .thenThrow(new UserException(UserExceptionType.INVALID_REFRESH_TOKEN));
+                .thenThrow(new DefaultException(ErrorCode.INVALID_AUTHENTICATION));
 
         mockMvc.perform(
                         post("/api/v1/auth/refresh")

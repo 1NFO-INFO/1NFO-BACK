@@ -5,12 +5,10 @@ import com.example.INFO.domain.auth.model.entity.LocalAuthDetailsEntity;
 import com.example.INFO.domain.auth.repository.LocalAuthDetailsRepository;
 import com.example.INFO.domain.auth.repository.OAuthDetailsRepository;
 import com.example.INFO.domain.auth.repository.RefreshTokenRepository;
-import com.example.INFO.domain.user.exception.UserException;
-import com.example.INFO.domain.user.exception.UserExceptionType;
-import com.example.INFO.domain.user.repository.UserRepository;
+import com.example.INFO.global.exception.DefaultException;
+import com.example.INFO.global.payload.ErrorCode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -61,10 +59,10 @@ class UserAuthServiceTest {
 
         when(localAuthDetailsRepository.findByUsername(username)).thenReturn(Optional.empty());
 
-        UserException e = Assertions.assertThrows(UserException.class, () -> {
+        DefaultException e = Assertions.assertThrows(DefaultException.class, () -> {
             userAuthService.login(username, password);
         });
-        assertEquals(UserExceptionType.USER_NOT_FOUND, e.getType());
+        assertEquals(ErrorCode.NOT_FOUND, e.getErrorCode());
     }
 
     @Test
@@ -76,10 +74,10 @@ class UserAuthServiceTest {
         when(localAuthDetailsRepository.findByUsername(username)).thenReturn(Optional.of(localAuthDetails));
         when(passwordEncoder.matches(wrongPassword, localAuthDetails.getPassword())).thenReturn(false);
 
-        UserException e = Assertions.assertThrows(UserException.class, () -> {
+        DefaultException e = Assertions.assertThrows(DefaultException.class, () -> {
             userAuthService.login(username, wrongPassword);
         });
-        assertEquals(UserExceptionType.INVALID_PASSWORD, e.getType());
+        assertEquals(ErrorCode.INVALID_PASSWORD, e.getErrorCode());
     }
 
     @Test
@@ -100,10 +98,10 @@ class UserAuthServiceTest {
         setup_리프레쉬_test(userId, refreshToken);
         when(jwtTokenService.isExpired(refreshToken)).thenReturn(true);
 
-        UserException e = Assertions.assertThrows(UserException.class, () -> {
+        DefaultException e = Assertions.assertThrows(DefaultException.class, () -> {
             userAuthService.refresh(refreshToken);
         });
-        assertEquals(UserExceptionType.INVALID_REFRESH_TOKEN, e.getType());
+        assertEquals(ErrorCode.INVALID_AUTHENTICATION, e.getErrorCode());
     }
 
     @Test
@@ -114,10 +112,10 @@ class UserAuthServiceTest {
         setup_리프레쉬_test(userId, refreshToken);
         when(refreshTokenRepository.existsByValue(refreshToken)).thenReturn(false);
 
-        UserException e = Assertions.assertThrows(UserException.class, () -> {
+        DefaultException e = Assertions.assertThrows(DefaultException.class, () -> {
             userAuthService.refresh(refreshToken);
         });
-        assertEquals(UserExceptionType.INVALID_REFRESH_TOKEN, e.getType());
+        assertEquals(ErrorCode.INVALID_AUTHENTICATION, e.getErrorCode());
     }
 
     private void setup_리프레쉬_test(long userId, String refreshToken) {
