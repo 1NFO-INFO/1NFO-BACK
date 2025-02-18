@@ -10,6 +10,7 @@ import com.example.INFO.domain.board.dto.res.CommentLikeResponse;
 import com.example.INFO.domain.board.dto.res.LikeResponse;
 import com.example.INFO.domain.user.model.entity.UserEntity;
 import com.example.INFO.domain.user.repository.UserRepository;
+import com.example.INFO.global.exception.ConflictException;
 import com.example.INFO.global.exception.DefaultException;
 import com.example.INFO.global.exception.NotFoundException;
 import com.example.INFO.global.payload.ErrorCode;
@@ -29,14 +30,10 @@ public class LikeService {
     // 게시글 좋아요
     @Transactional
     public LikeResponse likeBoard(Long userId, Long boardId) {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "User not found"));
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Board not found"));
+        UserEntity user = validateUserExists(userId);
+        Board board = validateBoardExists(boardId);
 
-        if (likeRepository.existsByUserAndBoard(user, board)) {
-            throw new DefaultException(ErrorCode.DUPLICATE_ERROR, "Already liked");
-        }
+        validateAlreadyLikedBoard(user, board);
 
         Like like = Like.builder()
                 .user(user)
@@ -55,16 +52,13 @@ public class LikeService {
     // 게시글 좋아요 취소
     @Transactional
     public LikeResponse unlikeBoard(Long userId, Long boardId) {
-        Like like = likeRepository.findByUserIdAndBoardId(userId, boardId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Like not found"));
-
+        Like like = validateLikeExistsForBoard(userId, boardId);
         Long likeId = like.getLikeId(); // 삭제 전 Like ID 저장
 
         likeRepository.delete(like);
         likeRepository.flush();
 
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Board not found"));
+        Board board = validateBoardExists(boardId);
 
         return LikeResponse.builder()
                 .boardId(boardId)
@@ -76,14 +70,10 @@ public class LikeService {
     // 댓글 좋아요
     @Transactional
     public CommentLikeResponse likeComment(Long userId, Long commentId) {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "User not found"));
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Comment not found"));
+        UserEntity user = validateUserExists(userId);
+        Comment comment = validateCommentExists(commentId);
 
-        if (likeRepository.existsByUserAndComment(user, comment)) {
-            throw new DefaultException(ErrorCode.DUPLICATE_ERROR, "Already liked");
-        }
+        validateAlreadyLikedComment(user, comment);
 
         Like like = Like.builder()
                 .user(user)
@@ -102,16 +92,13 @@ public class LikeService {
     // 댓글 좋아요 취소
     @Transactional
     public CommentLikeResponse unlikeComment(Long userId, Long commentId) {
-        Like like = likeRepository.findByUserIdAndCommentId(userId, commentId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Like not found"));
-
+        Like like = validateLikeExistsForComment(userId, commentId);
         Long likeId = like.getLikeId(); // 삭제 전 Like ID 저장
 
         likeRepository.delete(like);
         likeRepository.flush();
 
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND.getCode(), "Comment not found"));
+        Comment comment = validateCommentExists(commentId);
 
         return CommentLikeResponse.builder()
                 .commentId(commentId)
@@ -119,6 +106,50 @@ public class LikeService {
                 .likeCount(comment.getLikeCount())
                 .build();
     }
+    //------------------------------예외처리 메소드------------------------------------------
 
+    // 사용자 존재 여부 확인
+    private UserEntity validateUserExists(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND, "User not found"));
+    }
+
+    // 게시글 존재 여부 확인
+    private Board validateBoardExists(Long boardId) {
+        return boardRepository.findById(boardId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND, "Board not found"));
+    }
+
+    // 댓글 존재 여부 확인
+    private Comment validateCommentExists(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND, "Comment not found"));
+    }
+
+    // 해당 사용자가 이미 게시글에 좋아요를 눌렀는지 확인
+    private void validateAlreadyLikedBoard(UserEntity user, Board board) {
+        if (likeRepository.existsByUserAndBoard(user, board)) {
+            throw new ConflictException(ErrorCode.DUPLICATE_ERROR, "Already liked this board");
+        }
+    }
+
+    // 해당 사용자가 이미 댓글에 좋아요를 눌렀는지 확인
+    private void validateAlreadyLikedComment(UserEntity user, Comment comment) {
+        if (likeRepository.existsByUserAndComment(user, comment)) {
+            throw new ConflictException(ErrorCode.DUPLICATE_ERROR, "Already liked this comment");
+        }
+    }
+
+    // 특정 사용자의 게시글 좋아요 여부 확인
+    private Like validateLikeExistsForBoard(Long userId, Long boardId) {
+        return likeRepository.findByUserIdAndBoardId(userId, boardId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND, "Like not found"));
+    }
+
+    // 특정 사용자의 댓글 좋아요 여부 확인
+    private Like validateLikeExistsForComment(Long userId, Long commentId) {
+        return likeRepository.findByUserIdAndCommentId(userId, commentId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND, "Like not found"));
+    }
 
 }
