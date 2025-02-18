@@ -1,6 +1,5 @@
 package com.example.INFO.domain.favorite.domain;
 
-import com.example.INFO.domain.ticket.domain.TicketData;
 import com.example.INFO.domain.user.model.entity.UserEntity;
 import com.example.INFO.global.common.BaseEntity;
 import jakarta.persistence.*;
@@ -27,8 +26,9 @@ public class Favorite extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ticket_data_seq", nullable = false)
-    private TicketData ticket;
+    @Column(name = "entity_id", nullable = false)
+    private String entityId; // 좋아요 대상의 ID
 
+    @Column(name = "entity_type", nullable = false)
+    private String entityType; // 좋아요 대상의 Type
 }
