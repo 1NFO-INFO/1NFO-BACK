@@ -28,7 +28,7 @@ public class Favorite extends BaseEntity {
     private UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ticket_data_seq", nullable = false)
+    @JoinColumn(name = "ticket_data_seq")
     private TicketData ticket;
 
 }
