@@ -1,10 +1,14 @@
 package com.example.INFO.domain.favorite.controller;
 
 import com.example.INFO.domain.favorite.dto.res.FavoriteResponseDto;
+import com.example.INFO.domain.favorite.dto.res.PagedResponseDto;
 import com.example.INFO.domain.favorite.service.FavoriteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,9 +38,12 @@ public class FavoriteController {
         return ResponseEntity.ok("좋아요가 취소되었습니다.");
     }
 
-    @Operation(summary = "좋아요한 항목 조회", description = "사용자가 좋아요한 항목을 최신순으로 조회합니다.")
+    @Operation(summary = "좋아요한 항목 조회", description = "사용자가 좋아요한 항목을 최신순으로 조회합니다. (무한 스크롤 지원)")
     @GetMapping("/my")
-    public ResponseEntity<List<FavoriteResponseDto>> getFavoriteEntities() {
-        return ResponseEntity.ok(favoriteService.getFavoriteEntities());
+    public ResponseEntity<PagedResponseDto<FavoriteResponseDto>> getFavoriteEntities(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdTime"));
+        return ResponseEntity.ok(favoriteService.getFavoriteEntities(pageable));
     }
 }

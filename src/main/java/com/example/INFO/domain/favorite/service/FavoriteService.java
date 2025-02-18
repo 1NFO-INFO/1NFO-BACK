@@ -3,6 +3,7 @@ package com.example.INFO.domain.favorite.service;
 import com.example.INFO.domain.favorite.domain.Favorite;
 import com.example.INFO.domain.favorite.domain.repository.FavoriteRepository;
 import com.example.INFO.domain.favorite.dto.res.FavoriteResponseDto;
+import com.example.INFO.domain.favorite.dto.res.PagedResponseDto;
 import com.example.INFO.domain.ticket.domain.TicketData;
 import com.example.INFO.domain.ticket.domain.repository.TicketDataRepository;
 import com.example.INFO.domain.user.model.entity.UserEntity;
@@ -12,6 +13,8 @@ import com.example.INFO.global.exception.ConflictException;
 import com.example.INFO.global.exception.NotFoundException;
 import com.example.INFO.global.payload.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +27,7 @@ import java.util.stream.Collectors;
 public class FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
-    private final TicketDataRepository ticketDataRepository; // ✅ 추가
+    private final TicketDataRepository ticketDataRepository;
     private final UserRepository userRepository;
     private final AuthUserService authUserService;
 
@@ -42,7 +45,7 @@ public class FavoriteService {
                 .entityType(entityType)
                 .build());
 
-        return mapToResponseDto(favorite); // ✅ ID 및 title 포함 반환
+        return mapToResponseDto(favorite);
     }
 
     // 좋아요 취소
@@ -55,30 +58,37 @@ public class FavoriteService {
         favoriteRepository.delete(favorite);
     }
 
-    // 좋아요한 항목 조회 (최신순 정렬)
-    public List<FavoriteResponseDto> getFavoriteEntities() {
+    // ✅ 좋아요한 항목 조회 (페이징 처리)
+    public PagedResponseDto<FavoriteResponseDto> getFavoriteEntities(Pageable pageable) {
         UserEntity user = findAuthenticatedUser();
 
-        return favoriteRepository.findByUserOrderByCreatedTimeDesc(user)
-                .stream()
-                .map(this::mapToResponseDto)
-                .collect(Collectors.toList());
+        Page<FavoriteResponseDto> favoritePage = favoriteRepository.findByUser(user, pageable)
+                .map(this::mapToResponseDto);
+
+        return new PagedResponseDto<>(
+                favoritePage.getContent(),
+                favoritePage.getNumber(),
+                favoritePage.getSize(),
+                favoritePage.getTotalElements(),
+                favoritePage.getTotalPages(),
+                favoritePage.isLast()
+        );
     }
 
     //------------------------- 예외처리 메소드 -------------------------
 
-    //  사용자 조회 메서드
+    // 사용자 조회 메서드
     private UserEntity findAuthenticatedUser() {
         long userId = authUserService.getAuthenticatedUserId();
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND, "사용자를 찾을 수 없습니다."));
     }
 
-    //  Favorite → FavoriteResponseDto 변환 메서드
+    // Favorite → FavoriteResponseDto 변환 메서드
     private FavoriteResponseDto mapToResponseDto(Favorite favorite) {
         String title = null;
 
-        //  좋아요한 항목이 `TICKET`일 경우, `title` 조회
+        // 좋아요한 항목이 `TICKET`일 경우
         if ("TICKET".equals(favorite.getEntityType())) {
             TicketData ticket = ticketDataRepository.findById(favorite.getEntityId())
                     .orElse(null);
@@ -96,3 +106,4 @@ public class FavoriteService {
         );
     }
 }
+

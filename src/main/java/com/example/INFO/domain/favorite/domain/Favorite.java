@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @Table(name = "favorite")
-public class Favorite extends BaseEntity { // ✅ BaseEntity 상속
+public class Favorite extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

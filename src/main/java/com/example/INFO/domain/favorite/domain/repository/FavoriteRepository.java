@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
+
     Optional<Favorite> findByUserAndEntityIdAndEntityType(UserEntity user, String entityId, String entityType);
-    List<Favorite> findByUserOrderByCreatedTimeDesc(UserEntity user); // ✅ 최신순 정렬
+
+    Page<Favorite> findByUser(UserEntity user, Pageable pageable);
 }
