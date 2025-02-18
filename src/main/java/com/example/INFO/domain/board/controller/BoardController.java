@@ -7,7 +7,7 @@ import com.example.INFO.domain.board.dto.res.BoardResponse;
 import com.example.INFO.domain.board.dto.res.TopLikedBoardResponse;
 import com.example.INFO.domain.board.service.BoardService;
 import com.example.INFO.domain.s3service.S3ImageService;
-import com.example.INFO.domain.user.service.AuthUserService;
+import com.example.INFO.domain.auth.service.AuthUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

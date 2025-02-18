@@ -18,6 +18,7 @@ public enum ErrorCode {
     EMPTY_FILE_EXCEPTION("4007", "빈 파일입니다."),
     NO_FILE_EXTENSION("4008", "파일 확장자가 없습니다."),
     INVALID_FILE_EXTENSION("4009", "잘못된 파일 확장자입니다."),
+    INVALID_PASSWORD("40010", "잘못된 비밀번호입니다."),
 
     // 401 Unauthorized
     UNAUTHORIZED("4010", "권한이 없습니다."),
@@ -31,7 +32,9 @@ public enum ErrorCode {
     // 500 Internal Server Error
     IO_EXCEPTION_ON_IMAGE_UPLOAD("5000", "이미지 업로드 중 IO 예외 발생"),
     IO_EXCEPTION_ON_IMAGE_DELETE("5001", "이미지 삭제 중 IO 예외 발생"),
-    PUT_OBJECT_EXCEPTION("5002", "S3 객체 업로드 중 오류 발생");
+    PUT_OBJECT_EXCEPTION("5002", "S3 객체 업로드 중 오류 발생"),
+    CLASS_CAST_EXCEPTION("5003", "백엔드 논리 오류 발생")
+    ;
 
     private final String code;
     private final String message;
