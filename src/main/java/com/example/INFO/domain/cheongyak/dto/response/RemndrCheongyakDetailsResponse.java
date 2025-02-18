@@ -37,8 +37,7 @@ public class RemndrCheongyakDetailsResponse {
     String homepageUrl;
 
     public CheongyakDetailsDto toDto() {
-        return CheongyakDetailsDto.builder()
-                .id(id)
+        return CheongyakDetailsDto.builder(id)
                 .houseName(houseName)
                 .supplyLocation(null)
                 .housingType(housingType)

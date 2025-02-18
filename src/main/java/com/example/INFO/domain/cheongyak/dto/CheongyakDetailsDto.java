@@ -34,4 +34,22 @@ public class CheongyakDetailsDto {
                 .homepageUrl(homepageUrl)
                 .build();
     }
+
+    public static CheongyakDetailsDto fromEntity(CheongyakDetailsEntity cheongyakDetailsEntity) {
+        return CheongyakDetailsDto.builder(cheongyakDetailsEntity.getId())
+                .houseName(cheongyakDetailsEntity.getHouseName())
+                .supplyLocation(cheongyakDetailsEntity.getSupplyLocation())
+                .housingType(cheongyakDetailsEntity.getHousingType())
+                .recruitmentNoticeDate(cheongyakDetailsEntity.getRecruitmentNoticeDate())
+                .supplyUnits(cheongyakDetailsEntity.getSupplyUnits())
+                .applicationStartDate(cheongyakDetailsEntity.getApplicationStartDate())
+                .applicationEndDate(cheongyakDetailsEntity.getApplicationEndDate())
+                .winnerAnnouncementDate(cheongyakDetailsEntity.getWinnerAnnouncementDate())
+                .homepageUrl(cheongyakDetailsEntity.getHomepageUrl())
+                .build();
+    }
+
+    public static CheongyakDetailsDtoBuilder builder(Long id) {
+        return new CheongyakDetailsDtoBuilder().id(id);
+    }
 }
