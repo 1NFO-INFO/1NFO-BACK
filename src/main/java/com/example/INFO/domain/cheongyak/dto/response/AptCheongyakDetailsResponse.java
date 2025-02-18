@@ -40,8 +40,7 @@ public class AptCheongyakDetailsResponse {
     String homepageUrl;
 
     public CheongyakDetailsDto toDto() {
-        return CheongyakDetailsDto.builder()
-                .id(id)
+        return CheongyakDetailsDto.builder(id)
                 .houseName(houseName)
                 .supplyLocation(supplyLocation)
                 .housingType(housingType)
