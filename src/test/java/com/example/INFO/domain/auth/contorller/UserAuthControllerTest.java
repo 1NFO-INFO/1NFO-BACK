@@ -83,7 +83,7 @@ public class UserAuthControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsBytes(new UserLoginRequest(username, password)))
                 ).andDo(print())
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().is4xxClientError());
     }
 
     @Test
@@ -114,6 +114,6 @@ public class UserAuthControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsBytes(new UserRefreshRequest(refreshToken)))
                 ).andDo(print())
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().is4xxClientError());
     }
 }

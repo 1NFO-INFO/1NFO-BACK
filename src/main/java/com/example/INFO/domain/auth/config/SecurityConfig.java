@@ -34,7 +34,8 @@ public class SecurityConfig {
             "/api/v1/boards/search/**",
             "/api/v1/boards/category",
             "/api/v1/comments/search/board/**",
-            "/api/v1/comments/**"
+            "/api/v1/comments/**",
+            "/api/v1/cheongyak/**"
     };
 
     private static final String[] PUBLIC_POST_URLS = {

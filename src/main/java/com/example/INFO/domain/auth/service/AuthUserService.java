@@ -21,7 +21,7 @@ public class AuthUserService {
         if (principal instanceof UserDetailsImpl) {
             return (UserDetailsImpl) principal;
         } else {
-            throw new DefaultException(ErrorCode.INTERNAL_SERVER_ERROR);
+            throw new DefaultException(ErrorCode.CLASS_CAST_EXCEPTION);
         }
     }
 
