@@ -3,6 +3,7 @@ package com.example.INFO.domain.user.model.entity;
 import com.example.INFO.domain.auth.model.entity.LocalAuthDetailsEntity;
 import com.example.INFO.domain.auth.model.entity.OAuthDetailsEntity;
 import com.example.INFO.domain.favorite.domain.Favorite;
+import com.example.INFO.domain.user.dto.UserUpdateDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -71,5 +72,9 @@ public class UserEntity {
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void updateUserInfo(UserUpdateDto userUpdateDto) {
+        this.nickname = userUpdateDto.getNickname();
     }
 }

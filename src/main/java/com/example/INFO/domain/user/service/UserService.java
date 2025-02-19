@@ -6,6 +6,7 @@ import com.example.INFO.domain.auth.model.entity.LocalAuthDetailsEntity;
 import com.example.INFO.domain.auth.model.entity.OAuthDetailsEntity;
 import com.example.INFO.domain.auth.service.AuthUserService;
 import com.example.INFO.domain.user.dto.UserInfoMeDto;
+import com.example.INFO.domain.user.dto.UserUpdateDto;
 import com.example.INFO.domain.user.model.entity.UserEntity;
 import com.example.INFO.domain.auth.repository.LocalAuthDetailsRepository;
 import com.example.INFO.domain.auth.repository.OAuthDetailsRepository;
@@ -79,5 +80,23 @@ public class UserService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
 
         user.updateNickname(nickname);
+    }
+
+    public void updateUserInfo(UserUpdateDto userUpdateDto, boolean isLocalUser) {
+        long userId = authUserService.getAuthenticatedUserId();
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+
+        user.updateUserInfo(userUpdateDto);
+        if (isLocalUser) {
+            updateLocalAuthPassword(userId, userUpdateDto.getPassword());
+        }
+    }
+
+    private void updateLocalAuthPassword(long userId, String password) {
+        LocalAuthDetailsEntity localAuthDetails = localAuthDetailsRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+
+        localAuthDetails.updatePassword(passwordEncoder.encode(password));
     }
 }

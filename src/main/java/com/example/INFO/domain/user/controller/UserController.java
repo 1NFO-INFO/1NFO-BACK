@@ -1,6 +1,8 @@
 package com.example.INFO.domain.user.controller;
 
+import com.example.INFO.domain.user.dto.UserUpdateDto;
 import com.example.INFO.domain.user.dto.request.UserSignupRequest;
+import com.example.INFO.domain.user.dto.request.UserUpdateRequest;
 import com.example.INFO.domain.user.dto.response.UserInfoMeResponse;
 import com.example.INFO.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,15 @@ public class UserController {
     @PatchMapping("/nickname")
     public ResponseEntity<Void> initNickname(@RequestBody String nickname) {
         userService.updateNickname(nickname);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PatchMapping("/info/me")
+    public ResponseEntity<Void> updateUserInfo(
+            @RequestBody UserUpdateRequest request,
+            @RequestParam(value = "is_local_user") boolean isLocalUser
+    ) {
+        userService.updateUserInfo(UserUpdateDto.fromRequest(request), isLocalUser);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

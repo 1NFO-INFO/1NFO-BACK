@@ -50,6 +50,7 @@ public class SecurityConfig {
 
     private static final String[] AUTHENTICATED_PATCH_URLS = {
             "/api/v1/users/nickname",
+            "/api/v1/users/info/me",
     };
 
     private final JwtTokenService jwtTokenService;

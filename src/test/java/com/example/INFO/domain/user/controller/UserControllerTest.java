@@ -3,6 +3,7 @@ package com.example.INFO.domain.user.controller;
 import com.example.INFO.domain.auth.service.UserAuthService;
 import com.example.INFO.domain.user.dto.UserInfoMeDto;
 import com.example.INFO.domain.user.dto.request.UserSignupRequest;
+import com.example.INFO.domain.user.dto.request.UserUpdateRequest;
 import com.example.INFO.domain.user.service.UserService;
 import com.example.INFO.global.exception.CustomException;
 import com.example.INFO.global.exception.DefaultException;
@@ -19,8 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.*;
 import static org.mockito.BDDMockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -130,5 +130,18 @@ public class UserControllerTest {
                         get("/api/v1/users/info/me")
                 ).andDo(print())
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void 회원정보_업데이트_성공() throws Exception {
+        willDoNothing().given(userService).updateUserInfo(any(), anyBoolean());
+
+        mockMvc.perform(
+                patch("/api/v1/users/info/me")
+                        .queryParam("is_local_user", "true")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new UserUpdateRequest("nickname", "password")))
+                ).andDo(print())
+                .andExpect(status().isOk());
     }
 }

@@ -2,9 +2,12 @@ package com.example.INFO.domain.user.service;
 
 import com.example.INFO.domain.auth.dto.KakaoOAuthUserInfoDto;
 import com.example.INFO.domain.auth.model.constant.OAuthProvider;
+import com.example.INFO.domain.auth.model.entity.LocalAuthDetailsEntity;
 import com.example.INFO.domain.auth.repository.LocalAuthDetailsRepository;
 import com.example.INFO.domain.auth.repository.OAuthDetailsRepository;
 import com.example.INFO.domain.auth.service.AuthUserService;
+import com.example.INFO.domain.user.dto.UserUpdateDto;
+import com.example.INFO.domain.user.dto.request.UserUpdateRequest;
 import com.example.INFO.domain.user.model.entity.UserEntity;
 import com.example.INFO.domain.user.repository.UserRepository;
 import com.example.INFO.domain.auth.service.JwtTokenService;
@@ -129,5 +132,36 @@ class UserServiceTest {
 
         CustomException e = assertThrows(CustomException.class, () -> userService.updateNickname(nickname));
         assertThat(e.getErrorCode()).isEqualTo(ErrorCode.NOT_FOUND);
+    }
+
+    @Test
+    void 회원_정보_수정_성공_로컬_유저() {
+        long userId = 1L;
+        String nickname = "nickname";
+        String password = "password";
+        UserUpdateDto userUpdateDto = UserUpdateDto.fromRequest(new UserUpdateRequest(nickname, password));
+        boolean isLocalUser = false;
+
+        given(authUserService.getAuthenticatedUserId()).willReturn(userId);
+        given(userRepository.findById(userId)).willReturn(Optional.of(mock(UserEntity.class)));
+        given(localAuthDetailsRepository.findById(userId)).willReturn(Optional.of(mock(LocalAuthDetailsEntity.class)));
+
+        assertThatCode(() -> userService.updateUserInfo(userUpdateDto, isLocalUser))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    void 회원_정보_수정_성공_OAuth_유저() {
+        long userId = 1L;
+        String nickname = "nickname";
+        String password = "password";
+        UserUpdateDto userUpdateDto = UserUpdateDto.fromRequest(new UserUpdateRequest(nickname, password));
+        boolean isLocalUser = false;
+
+        given(authUserService.getAuthenticatedUserId()).willReturn(userId);
+        given(userRepository.findById(userId)).willReturn(Optional.of(mock(UserEntity.class)));
+
+        assertThatCode(() -> userService.updateUserInfo(userUpdateDto, isLocalUser))
+                .doesNotThrowAnyException();
     }
 }
