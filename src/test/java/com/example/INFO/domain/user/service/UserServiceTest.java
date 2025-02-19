@@ -106,4 +106,28 @@ class UserServiceTest {
         CustomException e = assertThrows(CustomException.class, userService::getUserInfo);
         assertThat(e.getErrorCode()).isEqualTo(ErrorCode.NOT_FOUND);
     }
+
+    @Test
+    void 닉네임_초기화_가져오기_성공() {
+        long userId = 1L;
+        String nickname = "nickname";
+
+        given(authUserService.getAuthenticatedUserId()).willReturn(userId);
+        given(userRepository.findById(userId)).willReturn(Optional.of(mock(UserEntity.class)));
+
+        assertThatCode(() -> userService.updateNickname(nickname))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    void 닉네임_초기화_실패_존재하지_않는_유저() {
+        long userId = 1L;
+        String nickname = "nickname";
+
+        given(authUserService.getAuthenticatedUserId()).willReturn(userId);
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+        CustomException e = assertThrows(CustomException.class, () -> userService.updateNickname(nickname));
+        assertThat(e.getErrorCode()).isEqualTo(ErrorCode.NOT_FOUND);
+    }
 }

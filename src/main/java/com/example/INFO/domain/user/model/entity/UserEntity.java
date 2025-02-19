@@ -68,4 +68,8 @@ public class UserEntity {
     private void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }

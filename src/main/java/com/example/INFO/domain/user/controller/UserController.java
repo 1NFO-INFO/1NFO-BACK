@@ -27,4 +27,10 @@ public class UserController {
     public ResponseEntity<UserInfoMeResponse> getUserInfoMe() {
         return ResponseEntity.ok(UserInfoMeResponse.fromDto(userService.getUserInfo()));
     }
+
+    @PatchMapping("/nickname")
+    public ResponseEntity<Void> initNickname(@RequestBody String nickname) {
+        userService.updateNickname(nickname);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }

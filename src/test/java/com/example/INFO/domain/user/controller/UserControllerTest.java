@@ -99,4 +99,36 @@ public class UserControllerTest {
                 ).andDo(print())
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    public void 닉네임_초기화_성공() throws Exception {
+        given(userService.getUserInfo()).willReturn(mock(UserInfoMeDto.class));
+
+        mockMvc.perform(
+                        get("/api/v1/users/info/me")
+                ).andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void 닉네임_초기화_실패_인증이_없는_접근() throws Exception {
+        willThrow(new CustomException(ErrorCode.UNAUTHORIZED))
+                .given(userService).getUserInfo();
+
+        mockMvc.perform(
+                        get("/api/v1/users/info/me")
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void 닉네임_초기화_실패_없는_회원() throws Exception {
+        willThrow(new CustomException(ErrorCode.UNAUTHORIZED))
+                .given(userService).getUserInfo();
+
+        mockMvc.perform(
+                        get("/api/v1/users/info/me")
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
 }

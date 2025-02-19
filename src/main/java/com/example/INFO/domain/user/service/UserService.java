@@ -72,4 +72,12 @@ public class UserService {
 
         return UserInfoMeDto.fromEntity(user);
     }
+
+    public void updateNickname(String nickname) {
+        long userId = authUserService.getAuthenticatedUserId();
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+
+        user.updateNickname(nickname);
+    }
 }
