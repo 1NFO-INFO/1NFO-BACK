@@ -4,21 +4,27 @@ import com.example.INFO.domain.auth.dto.KakaoOAuthUserInfoDto;
 import com.example.INFO.domain.auth.model.constant.OAuthProvider;
 import com.example.INFO.domain.auth.repository.LocalAuthDetailsRepository;
 import com.example.INFO.domain.auth.repository.OAuthDetailsRepository;
+import com.example.INFO.domain.auth.service.AuthUserService;
+import com.example.INFO.domain.user.model.entity.UserEntity;
 import com.example.INFO.domain.user.repository.UserRepository;
 import com.example.INFO.domain.auth.service.JwtTokenService;
+import com.example.INFO.global.exception.CustomException;
 import com.example.INFO.global.exception.DefaultException;
 import com.example.INFO.global.payload.ErrorCode;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.*;
 
 class UserServiceTest {
 
+    private final AuthUserService authUserService = mock(AuthUserService.class);
     private final UserRepository userRepository = mock(UserRepository.class);
     private final LocalAuthDetailsRepository localAuthDetailsRepository = mock(LocalAuthDetailsRepository.class);
     private final OAuthDetailsRepository oAuthDetailsRepository = mock(OAuthDetailsRepository.class);
@@ -26,6 +32,7 @@ class UserServiceTest {
     private final JwtTokenService jwtTokenService = mock(JwtTokenService.class);
 
     private final UserService userService = new UserService(
+            authUserService,
             userRepository,
             localAuthDetailsRepository,
             oAuthDetailsRepository,
@@ -78,5 +85,25 @@ class UserServiceTest {
         assertThat(e.getErrorCode()).isEqualTo(ErrorCode.DUPLICATE_ERROR);
     }
 
+    @Test
+    void 회원_정보_가져오기_성공() {
+        long userId = 1L;
 
+        given(authUserService.getAuthenticatedUserId()).willReturn(userId);
+        given(userRepository.findById(userId)).willReturn(Optional.of(mock(UserEntity.class)));
+
+        assertThatCode(userService::getUserInfo)
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    void 회원_정보_가져오기_실패_존재하지_않는_유저() {
+        long userId = 1L;
+
+        given(authUserService.getAuthenticatedUserId()).willReturn(userId);
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+        CustomException e = assertThrows(CustomException.class, userService::getUserInfo);
+        assertThat(e.getErrorCode()).isEqualTo(ErrorCode.NOT_FOUND);
+    }
 }

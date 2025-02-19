@@ -4,10 +4,13 @@ import com.example.INFO.domain.auth.dto.KakaoOAuthUserInfoDto;
 import com.example.INFO.domain.auth.model.constant.OAuthProvider;
 import com.example.INFO.domain.auth.model.entity.LocalAuthDetailsEntity;
 import com.example.INFO.domain.auth.model.entity.OAuthDetailsEntity;
+import com.example.INFO.domain.auth.service.AuthUserService;
+import com.example.INFO.domain.user.dto.UserInfoMeDto;
 import com.example.INFO.domain.user.model.entity.UserEntity;
 import com.example.INFO.domain.auth.repository.LocalAuthDetailsRepository;
 import com.example.INFO.domain.auth.repository.OAuthDetailsRepository;
 import com.example.INFO.domain.user.repository.UserRepository;
+import com.example.INFO.global.exception.CustomException;
 import com.example.INFO.global.exception.DefaultException;
 import com.example.INFO.global.payload.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -16,14 +19,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
 @Log4j2
 public class UserService {
 
+    private final AuthUserService authUserService;
     private final UserRepository userRepository;
     private final LocalAuthDetailsRepository localAuthDetailsRepository;
     private final OAuthDetailsRepository oAuthDetailsRepository;
@@ -61,5 +63,13 @@ public class UserService {
         UserEntity user = userRepository.save(UserEntity.of(email));
 
         oAuthDetailsRepository.save(OAuthDetailsEntity.of(user, email, OAuthProvider.KAKAO));
+    }
+
+    public UserInfoMeDto getUserInfo() {
+        long userId = authUserService.getAuthenticatedUserId();
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+
+        return UserInfoMeDto.fromEntity(user);
     }
 }

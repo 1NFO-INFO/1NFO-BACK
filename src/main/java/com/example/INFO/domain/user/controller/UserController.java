@@ -1,13 +1,8 @@
 package com.example.INFO.domain.user.controller;
 
-import com.example.INFO.domain.auth.dto.request.UserLoginRequest;
-import com.example.INFO.domain.auth.dto.request.UserRefreshRequest;
-import com.example.INFO.domain.auth.service.UserAuthService;
 import com.example.INFO.domain.user.dto.request.UserSignupRequest;
-import com.example.INFO.domain.auth.dto.response.UserLoginResponse;
-import com.example.INFO.domain.auth.dto.response.UserRefreshResponse;
+import com.example.INFO.domain.user.dto.response.UserInfoMeResponse;
 import com.example.INFO.domain.user.service.UserService;
-import com.example.INFO.domain.auth.dto.JwtTokenDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -26,5 +21,10 @@ public class UserController {
     public ResponseEntity<Void> signup(@RequestBody UserSignupRequest request) {
         userService.createUser(request.getUsername(), request.getPassword());
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/info/me")
+    public ResponseEntity<UserInfoMeResponse> getUserInfoMe() {
+        return ResponseEntity.ok(UserInfoMeResponse.fromDto(userService.getUserInfo()));
     }
 }
