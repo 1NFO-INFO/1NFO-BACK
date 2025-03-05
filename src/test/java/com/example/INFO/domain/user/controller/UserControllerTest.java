@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -133,6 +134,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void 회원정보_업데이트_성공() throws Exception {
         willDoNothing().given(userService).updateUserInfo(any(), anyBoolean());
 
