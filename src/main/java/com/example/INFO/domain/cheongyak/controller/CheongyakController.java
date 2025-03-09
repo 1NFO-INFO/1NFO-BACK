@@ -83,7 +83,7 @@ public class CheongyakController {
     public ResponseEntity<CheongyakDetailsResponse> details(
             @PathVariable("id")
             @Parameter(description = "청약 ID")
-            Long id
+            String id
     ) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CheongyakDetailsResponse.fromDto(cheongyakService.details(id)));

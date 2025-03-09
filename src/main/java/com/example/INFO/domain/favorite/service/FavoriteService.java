@@ -1,5 +1,7 @@
 package com.example.INFO.domain.favorite.service;
 
+import com.example.INFO.domain.cheongyak.model.entity.CheongyakDetailsEntity;
+import com.example.INFO.domain.cheongyak.repository.CheongyakDetailsRepository;
 import com.example.INFO.domain.favorite.domain.Favorite;
 import com.example.INFO.domain.favorite.domain.repository.FavoriteRepository;
 import com.example.INFO.domain.favorite.dto.res.FavoriteResponseDto;
@@ -28,6 +30,7 @@ public class FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
     private final TicketDataRepository ticketDataRepository;
+    private final CheongyakDetailsRepository cheongyakDetailsRepository;
     private final UserRepository userRepository;
     private final AuthUserService authUserService;
 
@@ -88,13 +91,24 @@ public class FavoriteService {
     private FavoriteResponseDto mapToResponseDto(Favorite favorite) {
         String title = null;
 
-        // 좋아요한 항목이 `TICKET`일 경우
-        if ("TICKET".equals(favorite.getEntityType())) {
-            TicketData ticket = ticketDataRepository.findById(favorite.getEntityId())
-                    .orElse(null);
-            if (ticket != null) {
-                title = ticket.getTitle();
-            }
+        switch (favorite.getEntityType()) {
+            // 좋아요한 항목이 `TICKET`일 경우
+            case "TICKET":
+                TicketData ticket = ticketDataRepository.findById(favorite.getEntityId())
+                        .orElse(null);
+                if (ticket != null) {
+                    title = ticket.getTitle();
+                }
+                break;
+            case "CHEONGYAK":
+                CheongyakDetailsEntity cheongyak = cheongyakDetailsRepository.findById(favorite.getEntityId())
+                        .orElse(null);
+                if (cheongyak != null) {
+                    title = cheongyak.getHouseName();
+                }
+                break;
+            default:
+                break;
         }
 
         return new FavoriteResponseDto(

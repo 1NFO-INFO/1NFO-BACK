@@ -15,7 +15,7 @@ public class CheongyakDetailsResponse {
 
     @JsonProperty("id")
     @Schema(description = "청약 공고 ID")
-    Long id;
+    String id;
 
     @JsonProperty("house_name")
     @Schema(description = "아파트 이름")
