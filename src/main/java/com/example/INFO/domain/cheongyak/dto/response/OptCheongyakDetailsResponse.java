@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 public class OptCheongyakDetailsResponse {
 
     @JsonProperty("PBLANC_NO")
-    Long id;
+    String id;
 
     @JsonProperty("HOUSE_NM")
     String houseName;

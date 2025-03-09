@@ -19,7 +19,7 @@ public class CheongyakDetailsEntity {
 
     @Id
     @Column(name = "id")
-    private Long id;
+    private String id;
 
     @Column(name = "house_name")
     private String houseName;
@@ -48,7 +48,7 @@ public class CheongyakDetailsEntity {
     @Column(name = "homepage_url")
     private String homepageUrl;
 
-    public static CheongyakDetailsEntityBuilder builder(Long id) {
+    public static CheongyakDetailsEntityBuilder builder(String id) {
         return new CheongyakDetailsEntityBuilder().id(id);
     }
 }

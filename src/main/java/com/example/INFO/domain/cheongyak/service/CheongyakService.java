@@ -33,7 +33,7 @@ public class CheongyakService {
         return cheongyakDetailsRepository.findAll(spec, pageable).map(CheongyakDetailsDto::fromEntity);
     }
 
-    public CheongyakDetailsDto details(Long id) {
+    public CheongyakDetailsDto details(String id) {
         return cheongyakDetailsRepository.findById(id)
                 .map(CheongyakDetailsDto::fromEntity)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND, "청약 상세 정보를 찾을 수 없습니다."));
