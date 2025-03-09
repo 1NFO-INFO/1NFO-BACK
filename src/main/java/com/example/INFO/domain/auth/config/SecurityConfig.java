@@ -44,6 +44,15 @@ public class SecurityConfig {
             "/api/v1/auth/refresh"
     };
 
+    private static final String[] AUTHENTICATED_GET_URLS = {
+            "/api/v1/users/me",
+    };
+
+    private static final String[] AUTHENTICATED_PATCH_URLS = {
+            "/api/v1/users/nickname",
+            "/api/v1/users/info/me",
+    };
+
     private final JwtTokenService jwtTokenService;
     private final CustomUserDetailsService userDetailsService;
 
@@ -57,6 +66,8 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, PUBLIC_GET_URLS).permitAll()
                                 .requestMatchers("/api/v1/ticket/**").permitAll()
                                 .requestMatchers("/api/v1/favorites/**").authenticated()
+                                .requestMatchers(HttpMethod.GET, AUTHENTICATED_GET_URLS).authenticated()
+                                .requestMatchers(HttpMethod.PATCH, AUTHENTICATED_PATCH_URLS).authenticated()
                                 .anyRequest().permitAll()
                 ).sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

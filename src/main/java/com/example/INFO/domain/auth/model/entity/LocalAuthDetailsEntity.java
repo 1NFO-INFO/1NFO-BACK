@@ -37,4 +37,8 @@ public class LocalAuthDetailsEntity {
     public static LocalAuthDetailsEntity of(UserEntity user, String username, String password) {
         return new LocalAuthDetailsEntity(user, username, password);
     }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 }

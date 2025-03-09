@@ -3,6 +3,7 @@ package com.example.INFO.domain.user.model.entity;
 import com.example.INFO.domain.auth.model.entity.LocalAuthDetailsEntity;
 import com.example.INFO.domain.auth.model.entity.OAuthDetailsEntity;
 import com.example.INFO.domain.favorite.domain.Favorite;
+import com.example.INFO.domain.user.dto.UserUpdateDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -27,11 +28,14 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nickname", unique = true)
+    @Column(name = "nickname")
     private String nickname;
 
     @Column(name = "email", nullable = false)
     private String email;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private LocalAuthDetailsEntity localAuthDetails;
@@ -51,12 +55,13 @@ public class UserEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    private UserEntity(String email) {
+    private UserEntity(String email, String phoneNumber) {
         this.email = email;
+        this.phoneNumber = phoneNumber;
     }
 
-    public static UserEntity of(String email) {
-        return new UserEntity(email);
+    public static UserEntity of(String email, String phoneNumber) {
+        return new UserEntity(email, phoneNumber);
     }
 
     @PrePersist
@@ -67,5 +72,13 @@ public class UserEntity {
     @PreUpdate
     private void preUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateUserInfo(UserUpdateDto userUpdateDto) {
+        this.nickname = userUpdateDto.getNickname();
     }
 }

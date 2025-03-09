@@ -14,11 +14,15 @@ public class KakaoOAuthUserInfoResponse {
     KakaoAccount kakaoAccount;
 
     public KakaoOAuthUserInfoDto toDto() {
-        return KakaoOAuthUserInfoDto.of(kakaoAccount.getEmail());
+        return KakaoOAuthUserInfoDto.of(kakaoAccount.getEmail(), kakaoAccount.getPhoneNumber());
     }
 
     @Value
     private static class KakaoAccount {
+        @JsonProperty("email")
         String email;
+
+        @JsonProperty("phone_number")
+        String phoneNumber;
     }
 }

@@ -19,6 +19,7 @@ public enum ErrorCode {
     NO_FILE_EXTENSION("4008", "파일 확장자가 없습니다."),
     INVALID_FILE_EXTENSION("4009", "잘못된 파일 확장자입니다."),
     INVALID_PASSWORD("40010", "잘못된 비밀번호입니다."),
+    INVALID_PHONE_NUMBER("40011", "잘못된 전화번호 형식입니다."),
 
     // 401 Unauthorized
     UNAUTHORIZED("4010", "권한이 없습니다."),

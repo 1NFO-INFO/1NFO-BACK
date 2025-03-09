@@ -54,7 +54,8 @@ class KakaoOAuthControllerTest {
     @Test
     void 카카오_OAuth_callback() throws Exception {
         String accessToken = "test_access_token";
-        KakaoOAuthUserInfoDto userInfo = KakaoOAuthUserInfoDto.of("email");
+        String phoneNumber = "+82 10 1234 5678";
+        KakaoOAuthUserInfoDto userInfo = KakaoOAuthUserInfoDto.of("email", phoneNumber);
         JwtTokenDto jwtTokenDto = JwtTokenDto.of("access-token", "refresh-token");
 
         given(kakaoOAuthService.getAccessToken(any())).willReturn(accessToken);
@@ -73,7 +74,8 @@ class KakaoOAuthControllerTest {
     @Test
     void 카카오_OAuth_callback_실패() throws Exception {
         String accessToken = "test_access_token";
-        KakaoOAuthUserInfoDto userInfo = KakaoOAuthUserInfoDto.of("email");
+        String phoneNumber = "+82 10 1234 5678";
+        KakaoOAuthUserInfoDto userInfo = KakaoOAuthUserInfoDto.of("email", phoneNumber);
         JwtTokenDto jwtTokenDto = JwtTokenDto.of("access-token", "refresh-token");
 
         given(kakaoOAuthService.getAccessToken(any())).willReturn(accessToken);
