@@ -11,4 +11,7 @@ public class UserUpdateRequest {
 
     @JsonProperty("password")
     String password;
+
+    @JsonProperty("phone_number")
+    String phoneNumber;
 }

@@ -1,6 +1,7 @@
 package com.example.INFO.domain.user.controller;
 
 import com.example.INFO.domain.auth.service.UserAuthService;
+import com.example.INFO.domain.user.dto.LocalUserCreateDto;
 import com.example.INFO.domain.user.dto.UserInfoMeDto;
 import com.example.INFO.domain.user.dto.request.UserSignupRequest;
 import com.example.INFO.domain.user.dto.request.UserUpdateRequest;
@@ -44,11 +45,12 @@ public class UserControllerTest {
     public void 회원가입() throws Exception {
         String username = "username";
         String password = "password";
+        String phoneNumber = "01012345678";
 
         mockMvc.perform(
                 post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new UserSignupRequest(username, password)))
+                        .content(objectMapper.writeValueAsBytes(new UserSignupRequest(username, password, phoneNumber)))
                 ).andDo(print())
                 .andExpect(status().isOk());
     }
@@ -57,16 +59,32 @@ public class UserControllerTest {
     public void 회원가입시_이미_회원가입된_username으로_회원가입을_하는경우_Conflict를_반환한다() throws Exception {
         String username = "username";
         String password = "password";
+        String phoneNumber = "01012345678";
+        LocalUserCreateDto localUserCreateDto = LocalUserCreateDto.of(username, password, phoneNumber);
 
         doThrow(new DefaultException(ErrorCode.DUPLICATE_ERROR))
-                .when(userService).createUser(username, password);
+                .when(userService).createUser(localUserCreateDto);
 
         mockMvc.perform(
                 post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new UserSignupRequest(username, password)))
+                        .content(objectMapper.writeValueAsBytes(new UserSignupRequest(username, password, phoneNumber)))
                 ).andDo(print())
                 .andExpect(status().isConflict());
+    }
+
+    @Test
+    public void 회원가입시_잘못된_전화번호_형식으로_회원가입을_하는경우_BadRequest를_반환한다() throws Exception {
+        String username = "username";
+        String password = "password";
+        String phoneNumber = "010-5290-7914";
+
+        mockMvc.perform(
+                        post("/api/v1/users")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsBytes(new UserSignupRequest(username, password, phoneNumber)))
+                ).andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -78,6 +96,7 @@ public class UserControllerTest {
                 ).andDo(print())
                 .andExpect(status().isOk());
     }
+
 
     @Test
     public void 나의_회원정보_가져오기_실패_인증이_없는_접근() throws Exception {
@@ -142,7 +161,7 @@ public class UserControllerTest {
                 patch("/api/v1/users/info/me")
                         .queryParam("is_local_user", "true")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new UserUpdateRequest("nickname", "password")))
+                        .content(objectMapper.writeValueAsBytes(new UserUpdateRequest("nickname", "password", "010-1234-5678")))
                 ).andDo(print())
                 .andExpect(status().isOk());
     }

@@ -6,6 +6,7 @@ import com.example.INFO.domain.auth.model.entity.LocalAuthDetailsEntity;
 import com.example.INFO.domain.auth.repository.LocalAuthDetailsRepository;
 import com.example.INFO.domain.auth.repository.OAuthDetailsRepository;
 import com.example.INFO.domain.auth.service.AuthUserService;
+import com.example.INFO.domain.user.dto.LocalUserCreateDto;
 import com.example.INFO.domain.user.dto.UserUpdateDto;
 import com.example.INFO.domain.user.dto.request.UserUpdateRequest;
 import com.example.INFO.domain.user.model.entity.UserEntity;
@@ -46,10 +47,12 @@ class UserServiceTest {
     void 로컬회원_생성() {
         String username = "username";
         String password = "password";
+        String phoneNumber = "010-1234-5678";
+        LocalUserCreateDto localUserCreateDto = LocalUserCreateDto.of(username, password, phoneNumber);
 
         when(localAuthDetailsRepository.existsByUsername(username)).thenReturn(false);
 
-        assertThatCode(() -> userService.createUser(username, password))
+        assertThatCode(() -> userService.createUser(localUserCreateDto))
                 .doesNotThrowAnyException();
     }
 
@@ -57,18 +60,22 @@ class UserServiceTest {
     void 로컬회원_생성시_이미_존재하는_username이_있다면_예외가_발생한다() {
         String username = "username";
         String password = "password";
+        String phoneNumber = "010-1234-5678";
+        LocalUserCreateDto localUserCreateDto = LocalUserCreateDto.of(username, password, phoneNumber);
 
         when(localAuthDetailsRepository.existsByUsername(username)).thenReturn(true);
 
-        DefaultException e = assertThrows(DefaultException.class, () -> userService.createUser(username, password));
+        DefaultException e = assertThrows(DefaultException.class, () -> userService.createUser(localUserCreateDto));
         assertThat(e.getErrorCode()).isEqualTo(ErrorCode.DUPLICATE_ERROR);
     }
 
     @Test
     void 회원_생성_카카오_OAuth() {
         String email = "email";
+        String phoneNumber = "010-1234-5678";
+
         OAuthProvider provider  = OAuthProvider.KAKAO;
-        KakaoOAuthUserInfoDto userInfo = KakaoOAuthUserInfoDto.of(email);
+        KakaoOAuthUserInfoDto userInfo = KakaoOAuthUserInfoDto.of(email, phoneNumber);
 
         when(oAuthDetailsRepository.existsByEmailAndProvider(email, provider)).thenReturn(false);
 
@@ -79,8 +86,10 @@ class UserServiceTest {
     @Test
     void 카카오_OAuth_회원_생성시_이미_존재하는_username이_있다면_예외가_발생한다() {
         String email = "email";
+        String phoneNumber = "010-1234-5678";
+
         OAuthProvider provider  = OAuthProvider.KAKAO;
-        KakaoOAuthUserInfoDto userInfo = KakaoOAuthUserInfoDto.of(email);
+        KakaoOAuthUserInfoDto userInfo = KakaoOAuthUserInfoDto.of(email, "010-1234-5678");
 
         when(oAuthDetailsRepository.existsByEmailAndProvider(email, provider)).thenReturn(true);
 
@@ -139,7 +148,8 @@ class UserServiceTest {
         long userId = 1L;
         String nickname = "nickname";
         String password = "password";
-        UserUpdateDto userUpdateDto = UserUpdateDto.fromRequest(new UserUpdateRequest(nickname, password));
+        String phoneNumber = "010-1234-5678";
+        UserUpdateDto userUpdateDto = UserUpdateDto.fromRequest(new UserUpdateRequest(nickname, password, phoneNumber));
         boolean isLocalUser = false;
 
         given(authUserService.getAuthenticatedUserId()).willReturn(userId);
@@ -155,7 +165,9 @@ class UserServiceTest {
         long userId = 1L;
         String nickname = "nickname";
         String password = "password";
-        UserUpdateDto userUpdateDto = UserUpdateDto.fromRequest(new UserUpdateRequest(nickname, password));
+        String phoneNumber = "010-1234-5678";
+
+        UserUpdateDto userUpdateDto = UserUpdateDto.fromRequest(new UserUpdateRequest(nickname, password, phoneNumber));
         boolean isLocalUser = false;
 
         given(authUserService.getAuthenticatedUserId()).willReturn(userId);

@@ -11,6 +11,7 @@ public class UserInfoMeDto {
 
     String nickname;
     String email;
+    String phoneNumber;
     OAuthProvider oAuthProvider;
 
     public static UserInfoMeDto fromEntity(UserEntity userEntity) {
@@ -22,6 +23,7 @@ public class UserInfoMeDto {
         return UserInfoMeDto.of(
                 userEntity.getNickname(),
                 userEntity.getEmail(),
+                userEntity.getPhoneNumber(),
                 oAuthProvider
         );
     }

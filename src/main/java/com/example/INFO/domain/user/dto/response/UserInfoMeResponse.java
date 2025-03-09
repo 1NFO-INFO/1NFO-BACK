@@ -11,6 +11,8 @@ public class UserInfoMeResponse {
     String nickname;
     @JsonProperty("email")
     String email;
+    @JsonProperty("phone_number")
+    String phoneNumber;
     @JsonProperty("auth_type")
     String authType;
 
@@ -18,6 +20,7 @@ public class UserInfoMeResponse {
         return new UserInfoMeResponse(
                 dto.getNickname(),
                 dto.getEmail(),
+                dto.getPhoneNumber(),
                 dto.getOAuthProvider() != null ? dto.getOAuthProvider().name() : "LOCAL"
         );
     }

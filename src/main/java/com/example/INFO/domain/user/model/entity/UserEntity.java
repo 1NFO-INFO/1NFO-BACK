@@ -34,6 +34,9 @@ public class UserEntity {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private LocalAuthDetailsEntity localAuthDetails;
 
@@ -52,12 +55,13 @@ public class UserEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    private UserEntity(String email) {
+    private UserEntity(String email, String phoneNumber) {
         this.email = email;
+        this.phoneNumber = phoneNumber;
     }
 
-    public static UserEntity of(String email) {
-        return new UserEntity(email);
+    public static UserEntity of(String email, String phoneNumber) {
+        return new UserEntity(email, phoneNumber);
     }
 
     @PrePersist

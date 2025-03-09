@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -36,8 +37,8 @@ public class UserController {
             }
     )
     @PostMapping
-    public ResponseEntity<Void> signup(@RequestBody UserSignupRequest request) {
-        userService.createUser(request.getUsername(), request.getPassword());
+    public ResponseEntity<Void> signup(@Valid @RequestBody UserSignupRequest request) {
+        userService.createUser(request.toLocalUserCreateDto());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
